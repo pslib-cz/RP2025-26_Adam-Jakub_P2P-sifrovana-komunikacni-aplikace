@@ -1,0 +1,31 @@
+.animatedSvg {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.1));
+  -webkit-filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.1));
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.pathDraw {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawPath 2s ease-in-out forwards;
+}
+
+@keyframes drawPath {
+  0% {
+    stroke-dashoffset: 1000;
+    fill-opacity: 0;
+  }
+  70% {
+    stroke-dashoffset: 0;
+    fill-opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+  }
+}

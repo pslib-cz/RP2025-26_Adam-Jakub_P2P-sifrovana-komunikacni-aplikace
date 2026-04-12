@@ -1,0 +1,9 @@
+export type ConnectionState =
+  | "INITIALIZING"
+  | "SEARCHING_PEER"
+  | "CONNECTING"
+  | "CONNECTED"
+  | "DISCONNECTED"
+  | "RECONNECTING"
+  | "FAILED"
+  | "PEER_OFFLINE";

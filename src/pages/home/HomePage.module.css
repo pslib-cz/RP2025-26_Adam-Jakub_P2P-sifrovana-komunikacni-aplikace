@@ -1,0 +1,74 @@
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background-image: radial-gradient(circle, var(--white), transparent 20%, var(--primary));
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: var(--white);
+}
+
+.logoWrapper {
+  animation: fadeInScale 0.8s ease-out forwards;
+}
+
+h1 {
+  font-size: 2em;
+  color: #333;
+  animation: fadeInUp 0.8s ease-out 0.3s forwards;
+  opacity: 0;
+}
+
+.button {
+  animation: fadeInUp 0.8s ease-out 0.6s forwards;
+  opacity: 0;
+}
+
+.button {
+ padding-left: 33px;
+ padding-right: 33px;
+ padding-bottom: 16px;
+ padding-top: 16px;
+ border-radius: 9px;
+ background: var(--primary);
+ border: none;
+ font-family: inherit;
+ text-align: center;
+ cursor: pointer;
+ transition: 0.4s;
+}
+
+.button:hover {
+ box-shadow: 7px 5px 56px -14px var(--primary);
+ background: var(--primary);
+}
+.button:active {
+ transform: scale(0.97);
+ box-shadow: 7px 5px 56px -10px var(--primary);
+}

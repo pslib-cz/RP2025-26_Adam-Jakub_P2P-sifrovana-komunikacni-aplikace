@@ -1,0 +1,12 @@
+.authContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  background-image: radial-gradient(circle, var(--white), transparent 20%, var(--primary));
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: var(--white);
+}
