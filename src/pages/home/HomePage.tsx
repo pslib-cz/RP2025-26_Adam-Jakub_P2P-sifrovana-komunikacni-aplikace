@@ -11,9 +11,9 @@ function HomePage() {
           <Link className={styles.logoWrapper} to="/HomePage">
               <AnimatedLogo />    
           </Link>     
-          <h1>P2P Communication app</h1>
+          <h1>P2P Komunikační aplikace</h1>
           <button onClick={() => {navigate("/pages/LoginPage");}} className={styles.button}>
-            Get Started
+            Pokračovat
           </button>
       </div>
   );

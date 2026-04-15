@@ -3,6 +3,10 @@ export interface User {
   userId: string;
   username: string;
   email: string;
+  password: string;
+  letsTalk?: boolean;
+  bio?: string;
+  profilePicture?: string;
   isOnline: boolean;
   lastSeen: string;
 }

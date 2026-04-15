@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { registerSchema, type RegisterInput } from "../../types/auth";
 import { InputField } from "./InputField";
 import { useAuth } from "../../context/AuthContext";
-import "./AuthForms.css";
+import styles from "./AuthForms.module.css";
 
 export const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -55,11 +55,10 @@ export const RegisterForm: React.FC = () => {
   };
 
   return (
-    <div className="auth-container">
-    <form onSubmit={handleSubmit} className="auth-form">
+    <form onSubmit={handleSubmit} className={styles.authForm}>
       <h2>Vytvořit účet</h2>
 
-      {apiError && <div className="alert alert-error">{apiError}</div>}
+      {apiError && <div className={`${styles.alert} ${styles["alert--error"]}`}>{apiError}</div>}
 
       <InputField
         id="userId"
@@ -68,7 +67,7 @@ export const RegisterForm: React.FC = () => {
         value={formData.userId}
         onChange={(value) => handleChange("userId", value)}
         error={errors.userId}
-        placeholder="Např. john_doe"
+        placeholder="Např. jmeno123"
         disabled={loading}
       />
 
@@ -90,7 +89,7 @@ export const RegisterForm: React.FC = () => {
         value={formData.email}
         onChange={(value) => handleChange("email", value)}
         error={errors.email}
-        placeholder="vase@email.com"
+        placeholder="vas@email.com"
         disabled={loading}
       />
 
@@ -116,15 +115,13 @@ export const RegisterForm: React.FC = () => {
         disabled={loading}
       />
 
-      <button type="submit" disabled={loading} className="auth-button">
+      <button type="submit" disabled={loading} className={styles.authButton}>
         {loading ? "Registruji..." : "Registrace"}
       </button>
 
-      <p className="auth-switch">
+      <p className={styles.authSwitch}>
         Už máte účet? <Link to="/pages/LoginPage">Přihlaste se</Link>
       </p>
     </form>
-
-    </div>  
   );
 };

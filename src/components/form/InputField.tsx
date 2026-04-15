@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./InputField.module.css";
 
 interface InputFieldProps {
   id: string;
@@ -22,8 +23,10 @@ export const InputField: React.FC<InputFieldProps> = ({
   disabled = false,
 }) => {
   return (
-    <div className="form-group">
-      <label htmlFor={id}>{label}</label>
+    <div className={styles.formGroup}>
+      <label htmlFor={id} className={styles.formGroup__label}>
+        {label}
+      </label>
       <input
         id={id}
         type={type}
@@ -31,9 +34,9 @@ export const InputField: React.FC<InputFieldProps> = ({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className={error ? "error" : ""}
+        className={`${styles.formGroup__input} ${error ? styles["formGroup__input--error"] : ""}`}
       />
-      {error && <span className="error-message">{error}</span>}
+      {error && <span className={styles.formGroup__error}>{error}</span>}
     </div>
   );
 };

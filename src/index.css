@@ -1,11 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Kodchasan:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
 :root {
   font-family: "Kodchasan", "Inter", sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
 
   color-scheme: dark light;
-  color: #333;
   background-color: #ffffff;
 
   font-synthesis: none;
@@ -13,12 +10,25 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --font-smaller: 0.75rem;
+  --font-small: 0.875rem;
+  --font-medium: 1rem;
+  --font-large: 1.5rem;
+  --font-larger: 2rem;
+
 --primary: #787CC2;
 --text:  #1E1E1E;
 --white: #EDEDED;
 --active: #AEF044;
 --inactive: #C90E0E;
 --blue: #2563EB;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --white: #1E1E1E;
+    --text: #EDEDED;
+  }
 }
 
 * {

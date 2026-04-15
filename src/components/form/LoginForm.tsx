@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { loginSchema, type LoginInput } from "../../types/auth";
 import { InputField } from "./InputField";
 import { useAuth } from "../../context/AuthContext";
-import "./AuthForms.css";
+import styles from "./AuthForms.module.css";
 
 export const LoginForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -52,10 +52,10 @@ export const LoginForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="auth-form">
+    <form onSubmit={handleSubmit} className={styles.authForm}>
       <h2>Přihlášení</h2>
 
-      {apiError && <div className="alert alert-error">{apiError}</div>}
+      {apiError && <div className={`${styles.alert} ${styles["alert--error"]}`}>{apiError}</div>}
 
       <InputField
         id="email"
@@ -79,11 +79,11 @@ export const LoginForm: React.FC = () => {
         disabled={loading}
       />
 
-      <button type="submit" disabled={loading} className="auth-button">
+      <button type="submit" disabled={loading} className={styles.authButton}>
         {loading ? "Přihlašuji..." : "Přihlásit se"}
       </button>
 
-      <p className="auth-switch">
+      <p className={styles.authSwitch}>
         Nemáte účet? <Link to="/pages/RegisterPage">Zaregistrujte se</Link>
       </p>
     </form>
