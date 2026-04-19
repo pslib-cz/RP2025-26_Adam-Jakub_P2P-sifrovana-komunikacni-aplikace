@@ -1,27 +1,34 @@
 const bcrypt = require("bcryptjs");
 const db = require("./db");
 
+const DEFAULT_PFP = "/pfp-default.png";
+
 class AuthService {
   async register(userId, username, email, password) {
-    // check usera
     const existing = await db.get(
-      "SELECT id FROM users WHERE userId = ? OR email = ? OR username = ?",
+      `SELECT id, userId, email, username 
+       FROM users 
+       WHERE userId = ? OR email = ? OR username = ?`,
       [userId, email, username]
     );
 
     if (existing) {
-      const field = existing.userId === userId ? "userId" : existing.email === email ? "email" : "username";
+      let field = "unknown";
+
+      if (existing.userId === userId) field = "userId";
+      else if (existing.email === email) field = "email";
+      else if (existing.username === username) field = "username";
+
       throw new Error(`User with this ${field} already exists`);
     }
 
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
-
     const result = await db.run(
-      `INSERT INTO users (userId, username, email, password, isOnline, lastSeen)
-       VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
-      [userId, username, email, hashedPassword]
+      `INSERT INTO users 
+        (userId, username, email, password, isOnline, letsTalk, profilePicture, lastSeen)
+       VALUES (?, ?, ?, ?, 1, 1, ?, CURRENT_TIMESTAMP)`,
+      [userId, username, email, hashedPassword, DEFAULT_PFP]
     );
 
     return {
@@ -30,23 +37,28 @@ class AuthService {
       username,
       email,
       isOnline: true,
+      letsTalk: true,
+      profilePicture: DEFAULT_PFP,
     };
   }
 
   async login(email, password) {
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+    const user = await db.get(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) throw new Error("Invalid password");
 
-    if (!isPasswordValid) {
-      throw new Error("Invalid password");
-    }
-
-    await db.run("UPDATE users SET isOnline = 1, lastSeen = CURRENT_TIMESTAMP WHERE id = ?", [user.id]);
+    await db.run(
+      `UPDATE users 
+       SET isOnline = 1, lastSeen = CURRENT_TIMESTAMP 
+       WHERE id = ?`,
+      [user.id]
+    );
 
     return {
       id: user.id,
@@ -54,41 +66,58 @@ class AuthService {
       username: user.username,
       email: user.email,
       isOnline: true,
+      letsTalk: user.letsTalk,
+      profilePicture: user.profilePicture || DEFAULT_PFP,
     };
   }
 
   async logout(userId) {
-    await db.run("UPDATE users SET isOnline = 0, lastSeen = CURRENT_TIMESTAMP WHERE userId = ?", [userId]);
-  }
-
-  async getUserById(userId) {
-    return db.get("SELECT id, userId, username, email, isOnline, lastSeen FROM users WHERE userId = ?", [userId]);
-  }
-
-  async getAllUsers() {
-    return db.all("SELECT id, userId, username, email, isOnline, lastSeen FROM users ORDER BY isOnline DESC, lastSeen DESC");
-  }
-
-  async getUnreadMessages(userId) {
-    return db.all(
-      `SELECT m.*, u.username as fromUsername FROM messages m
-       JOIN users u ON m.fromUserId = u.userId
-       WHERE m.toUserId = ? AND m.isRead = 0
-       ORDER BY m.createdAt DESC`,
+    await db.run(
+      `UPDATE users 
+       SET isOnline = 0, lastSeen = CURRENT_TIMESTAMP 
+       WHERE userId = ?`,
       [userId]
     );
   }
 
-  async saveMessage(fromUserId, toUserId, message, type = "chat") {
-    return db.run(
-      `INSERT INTO messages (fromUserId, toUserId, message, type)
-       VALUES (?, ?, ?, ?)`,
-      [fromUserId, toUserId, message, type]
+  async getUserById(userId) {
+    return db.get(
+      `SELECT id, userId, username, email, letsTalk, profilePicture, bio, isOnline, lastSeen 
+       FROM users 
+       WHERE userId = ?`,
+      [userId]
     );
   }
 
-  async markMessageAsRead(messageId) {
-    return db.run("UPDATE messages SET isRead = 1 WHERE id = ?", [messageId]);
+  async getAllUsers() {
+    return db.all(
+      `SELECT id, userId, username, email, letsTalk, profilePicture, bio, isOnline, lastSeen 
+       FROM users 
+       ORDER BY isOnline DESC, lastSeen DESC`
+    );
+  }
+
+  async toggleLetsTalk(userId) {
+    const user = await this.getUserById(userId);
+    if (!user) throw new Error("User not found");
+
+    const newStatus = user.letsTalk ? 0 : 1;
+
+    await db.run(
+      "UPDATE users SET letsTalk = ? WHERE userId = ?",
+      [newStatus, userId]
+    );
+
+    return this.getUserById(userId);
+  }
+
+  async updateProfilePicture(userId, url) {
+    await db.run(
+      "UPDATE users SET profilePicture = ? WHERE userId = ?",
+      [url, userId]
+    );
+
+    return this.getUserById(userId);
   }
 }
 

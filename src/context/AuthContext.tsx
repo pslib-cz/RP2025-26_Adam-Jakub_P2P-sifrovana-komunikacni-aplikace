@@ -1,86 +1,90 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { authClient, type AuthUser } from "../services/authClient";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { client } from "../api/client";
+import type { AuthUser } from "../api/auth.api";
+import { storage } from "../utils/storage";
 
 interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   error: string | null;
-  register: (userId: string, username: string, email: string, password: string) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  register: (u: string, n: string, e: string, p: string) => Promise<void>;
+  login: (e: string, p: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateLetsTalk: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("authUser");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (err) {
-        localStorage.removeItem("authUser");
-      }
-    }
+    setUser(storage.get("authUser"));
     setLoading(false);
   }, []);
 
-  const register = async (userId: string, username: string, email: string, password: string) => {
+  const withError = async (fn: () => Promise<any>) => {
     try {
       setError(null);
-      const newUser = await authClient.register(userId, username, email, password);
+      return await fn();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error";
+      setError(message);
+      throw err;
+    }
+  };
+
+  const register = (userId: string, username: string, email: string, password: string) =>
+    withError(async () => {
+      const newUser = await client.auth.register(userId, username, email, password);
       setUser(newUser);
-      localStorage.setItem("authUser", JSON.stringify(newUser));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Registration failed";
-      setError(message);
-      throw err;
-    }
-  };
+      storage.set("authUser", newUser);
+    });
 
-  const login = async (email: string, password: string) => {
-    try {
-      setError(null);
-      const loggedInUser = await authClient.login(email, password);
-      setUser(loggedInUser);
-      localStorage.setItem("authUser", JSON.stringify(loggedInUser));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Login failed";
-      setError(message);
-      throw err;
-    }
-  };
+  const login = (email: string, password: string) =>
+    withError(async () => {
+      const loggedUser = await client.auth.login(email, password);
+      setUser(loggedUser);
+      storage.set("authUser", loggedUser);
+    });
 
-  const logout = async () => {
-    try {
-      setError(null);
-      if (user) {
-        await authClient.logout(user.userId);
-      }
+  const logout = () =>
+    withError(async () => {
+      if (user) await client.auth.logout(user.userId);
       setUser(null);
-      localStorage.removeItem("authUser");
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Logout failed";
-      setError(message);
-      throw err;
-    }
-  };
+      storage.remove("authUser");
+    });
+
+  const updateLetsTalk = () =>
+    withError(async () => {
+      if (!user) throw new Error("No user");
+
+      const updated = await client.user.toggleLetsTalk(user.userId);
+      setUser(updated);
+      storage.set("authUser", updated);
+    });
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, register, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        error,
+        register,
+        login,
+        logout,
+        updateLetsTalk,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
 };

@@ -12,26 +12,26 @@
 .authForm {
   background: var(--white);
   border-radius: 12px;
-  padding: 40px;
+  padding: 2.5rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  width: 100%;
-  min-width: 300px;
   max-width: 400px;
+  min-width: 300px;
+  width: 100%;
   animation: slideUp 0.3s ease-out;
 }
 
 .authForm h2 {
   color: var(--text);
   text-align: center;
-  margin: 0 0 30px 0;
-  font-size: 24px;
+  margin: 0 0 2rem 0;
+  font-size: 1.5rem;
 }
 
 .alert {
-  padding: 12px;
+  padding: 0.75rem;
   border-radius: 6px;
-  margin-bottom: 20px;
-  font-size: 13px;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
 }
 
 .alert--error {
@@ -41,23 +41,23 @@
 }
 
 .alert--success {
-  background: #efe;
-  color: #3c3;
+  background: #eefaf0;
+  color: #2e7d32;
   border: 1px solid #b3ffb3;
 }
 
 .authButton {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--blue) 100%);
-  color: white;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, var(--primary), var(--blue));
+  color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
-  margin-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .authButton:hover:not(:disabled) {
@@ -72,8 +72,8 @@
 
 .authSwitch {
   text-align: center;
-  margin-top: 20px;
-  font-size: 14px;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
   color: #666;
   font-family: "Inter", sans-serif;
 }

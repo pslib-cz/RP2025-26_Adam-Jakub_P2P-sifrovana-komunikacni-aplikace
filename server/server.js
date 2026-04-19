@@ -2,8 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const WebSocket = require("ws");
+
 const db = require("./db");
 const authRoutes = require("./authRoutes");
+const authService = require("./authService");
 
 const app = express();
 const PORT = 3001;
@@ -20,170 +22,147 @@ db.initialize().catch((err) => {
 app.use("/api/auth", authRoutes);
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", message: "Server is running" });
+  res.json({ status: "ok" });
 });
 
 app.use((err, req, res, next) => {
-  console.error("API Error:", err);
-  res.status(500).json({
-    success: false,
-    message: err.message || "Internal server error",
-  });
+  console.error(err);
+  res.status(500).json({ message: err.message });
 });
 
 app.listen(PORT, () => {
-  console.log(`API server bezi na http://localhost:${PORT}`);
+  console.log(`API server http://localhost:${PORT}`);
 });
 
 const wss = new WebSocket.Server({ port: WS_PORT });
-const users = {};
 
-console.log(`WebSocket signaling server bezi na ws://localhost:${WS_PORT}`);
+const onlineUsers = new Map();
+
+console.log(`WS server ws://localhost:${WS_PORT}`);
+
+async function getUsersWithStatus() {
+  const users = await authService.getAllUsers();
+
+  return users.map((u) => ({
+    userId: u.userId,
+    username: u.username,
+    letsTalk: u.letsTalk || false,
+    isOnline: onlineUsers.has(u.userId),
+  }));
+}
+
+async function broadcastUsers() {
+  const users = await getUsersWithStatus();
+
+  const payload = JSON.stringify({
+    type: "user_list",
+    users,
+  });
+
+  for (const client of wss.clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(payload);
+    }
+  }
+}
+
+setInterval(async () => {
+  try {
+    const users = await getUsersWithStatus();
+
+    const online = users.filter((u) => u.isOnline);
+    const letsTalk = users.filter((u) => u.isOnline && u.letsTalk);
+
+    console.log("\n========== SERVER STATUS ==========");
+    console.table(users);
+    console.log(`🟢 Online: ${online.length}`);
+    console.log(`💬 LetsTalk online: ${letsTalk.length}`);
+    console.log("==================================\n");
+  } catch (err) {
+    console.error(err);
+  }
+}, 5000);
 
 wss.on("connection", (ws) => {
-  console.log("Client connected to WebSocket");
+  console.log("Client connected");
 
-  ws.on("message", async (message) => {
+  ws.on("message", async (raw) => {
     try {
-      const data = JSON.parse(message);
+      const data = JSON.parse(raw);
 
-      switch (data.type) {
-        case "online": {
-          const { userId } = data;
-          ws.userId = userId;
-          users[userId] = { socket: ws, isOnline: true };
-          console.log(`User ${userId} je online`);
-
-          broadcastUserStatus();
-
-          const authService = require("./authService");
-          const unreadMessages = await authService.getUnreadMessages(userId);
-          if (unreadMessages.length > 0) {
-            ws.send(
-              JSON.stringify({
-                type: "unread_messages",
-                messages: unreadMessages,
-              })
-            );
-          }
-
-          break;
-        }
-
-        case "request_connection": {
-          const { targetUserId, offer, fromUserId } = data;
-          const targetUser = users[targetUserId];
-          console.log(`Zadost pro spojeni od ${fromUserId} pro ${targetUserId}`);
-
-          if (targetUser && targetUser.socket.readyState === WebSocket.OPEN) {
-            targetUser.socket.send(
-              JSON.stringify({
-                type: "connection_request",
-                fromUserId: fromUserId || ws.userId,
-                offer,
-              })
-            );
-          } else {
-            console.log(`User ${targetUserId} neni online`);
-          }
-          break;
-        }
-
-
-        case "signal": {
-          const { targetUserId, signal, fromUserId } = data;
-          const targetUser = users[targetUserId];
-
-          console.log(`Signal od ${fromUserId || ws.userId} pro ${targetUserId}: ${signal.type}`);
-
-          if (targetUser && targetUser.socket.readyState === WebSocket.OPEN) {
-            targetUser.socket.send(
-              JSON.stringify({
-                type: "signal",
-                fromUserId: fromUserId || ws.userId,
-                signal,
-              })
-            );
-          } else {
-            console.log(`Nelze odeslat signal: target ${targetUserId} neni online`);
-          }
-          break;
-        }
-
-        case "chat_message": {
-          const { targetUserId, message, fromUserId } = data;
-          const actualFromUserId = fromUserId || ws.userId;
-          const authService = require("./authService");
-
-          console.log(`Zprava od ${actualFromUserId} pro ${targetUserId}`);
-
-
-          await authService.saveMessage(actualFromUserId, targetUserId, message);
-
-          const targetUser = users[targetUserId];
-          if (targetUser && targetUser.socket.readyState === WebSocket.OPEN) {
-            const sender = await authService.getUserById(actualFromUserId);
-            targetUser.socket.send(
-              JSON.stringify({
-                type: "chat_message",
-                fromUserId: actualFromUserId,
-                fromUsername: sender.username,
-                message,
-                timestamp: new Date().toISOString(),
-              })
-            );
-          }
-          break;
-        }
+      if (data.type === "online") {
+        ws.userId = data.userId;
+        onlineUsers.set(data.userId, ws);
+        await broadcastUsers();
       }
-    } catch (err) {
-      console.error("WebSocket message error:", err);
-    }
-  });
 
-  ws.on("close", () => {
-    const authService = require("./authService");
+      if (data.type === "signal") {
+        const targetWs = onlineUsers.get(data.targetUserId);
+        if (!targetWs) return;
 
-    for (const [userId, userData] of Object.entries(users)) {
-      if (userData.socket === ws) {
-        users[userId].isOnline = false;
-        console.log(`User ${userId} odpojen`);
-
-        authService.logout(userId);
-
-        broadcastUserStatus();
-        break;
-      }
-    }
-  });
-
-  ws.on("error", (error) => {
-    console.error("WebSocket error:", error);
-  });
-});
-
-function broadcastUserStatus() {
-  const authService = require("./authService");
-
-  authService.getAllUsers().then((users) => {
-    const onlineUsers = users.filter((u) => u.isOnline);
-
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(
+        targetWs.send(
           JSON.stringify({
-            type: "user_list",
-            users: onlineUsers,
+            type: "signal",
+            fromUserId: data.fromUserId || ws.userId,
+            signal: data.signal,
           })
         );
       }
-    });
+
+      if (data.type === "ice_candidate") {
+        const targetWs = onlineUsers.get(data.targetUserId);
+        if (!targetWs) return;
+
+        targetWs.send(
+          JSON.stringify({
+            type: "ice_candidate",
+            fromUserId: data.fromUserId || ws.userId,
+            candidate: data.candidate,
+          })
+        );
+      }
+
+      if (data.type === "chat_message") {
+        const targetWs = onlineUsers.get(data.targetUserId);
+        if (!targetWs) return;
+
+        const sender = await authService.getUserById(
+          data.fromUserId || ws.userId
+        );
+
+        targetWs.send(
+          JSON.stringify({
+            type: "chat_message",
+            fromUserId: data.fromUserId || ws.userId,
+            fromUsername: sender.username,
+            message: data.message,
+            timestamp: new Date().toISOString(),
+          })
+        );
+      }
+    } catch (err) {
+      console.error("WS error:", err);
+    }
   });
-}
+
+  ws.on("close", async () => {
+    if (!ws.userId) return;
+
+    onlineUsers.delete(ws.userId);
+    await authService.logout(ws.userId);
+    await broadcastUsers();
+  });
+
+  ws.on("error", (err) => {
+    console.error("WS error:", err);
+  });
+});
 
 process.on("SIGINT", async () => {
-  console.log("\nShutting down...");
+  console.log("Shutting down...");
+
   await db.close();
   wss.close();
+
   process.exit(0);
 });

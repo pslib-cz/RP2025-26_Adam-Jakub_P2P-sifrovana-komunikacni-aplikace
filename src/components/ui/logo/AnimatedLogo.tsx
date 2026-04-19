@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./AnimatedLogo.module.css";
 
 function AnimatedLogo() {
@@ -9,7 +8,7 @@ function AnimatedLogo() {
       xmlns="http://www.w3.org/2000/svg"
       className={styles.animatedSvg}
       preserveAspectRatio="xMidYMid meet"
-      shape-rendering="geometricPrecision"
+      shapeRendering="geometricPrecision"
     >
       
       <path

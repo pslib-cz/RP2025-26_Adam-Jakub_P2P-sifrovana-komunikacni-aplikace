@@ -1,6 +1,5 @@
-import React from "react";
 import styles from "./HomePage.module.css";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AnimatedLogo from "../../components/ui/logo/AnimatedLogo";
 
 function HomePage() {

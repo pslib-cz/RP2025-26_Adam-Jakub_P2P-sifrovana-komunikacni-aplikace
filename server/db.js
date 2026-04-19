@@ -13,7 +13,7 @@ class Database {
       this.db = new sqlite3.Database(DB_PATH, (err) => {
         if (err) reject(err);
         else {
-          console.log("✅ Connected to SQLite database");
+          console.log("Sqlite funguje");
           this.createTables()
             .then(resolve)
             .catch(reject);
@@ -34,6 +34,9 @@ class Database {
             username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
+            letsTalk BOOLEAN DEFAULT 1,
+            profilePicture TEXT,
+            bio TEXT,
             isOnline BOOLEAN DEFAULT 0,
             lastSeen DATETIME DEFAULT CURRENT_TIMESTAMP,
             createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -41,7 +44,7 @@ class Database {
         `,
           (err) => {
             if (err) reject(err);
-            else console.log("✅ Users table created");
+            else console.log("Users tabulka vytvorena");
           }
         );
 
