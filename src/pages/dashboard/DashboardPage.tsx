@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 import { OnlineUsersList } from "../../components/dashboard/OnlineUsersList";
@@ -91,18 +91,25 @@ function DashboardPage() {
           loading={loading}
         />
       </div>
+<footer className={styles.footer}>
+  <label className={styles.switchLabel}>
+    <input
+      type="checkbox"
+      className={styles.switchInput}
+      checked={user.letsTalk || false}
+      onChange={handleToggleLetsTalk}
+      disabled={toggleLoading}
+    />
+    <span className={styles.slider}></span>
+    <span className={styles.switchText}>LetsTalk</span>
+  </label>
+  <div>
+    <Link to="/pages/ProfilePage" className={styles.profileButton}>
+    <img src="/pfp-default.png" alt="Profil" />
+    </Link>
 
-      <footer className={styles.footer}>
-        <label>
-          <input className={styles.slider}
-            type="checkbox"
-            checked={user.letsTalk || false}
-            onChange={handleToggleLetsTalk}
-            disabled={toggleLoading}
-          />
-          LetsTalk
-        </label>
-      </footer>
+  </div>
+</footer>
     </main>
   );
 }

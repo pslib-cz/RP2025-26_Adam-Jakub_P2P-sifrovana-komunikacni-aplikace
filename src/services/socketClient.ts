@@ -2,36 +2,87 @@ type WSMessage =
   | { type: "user_list"; users: any[] }
   | { type: "signal"; fromUserId: string; signal: any }
   | { type: "ice_candidate"; fromUserId: string; candidate: any }
-  | { type: "chat_message"; fromUserId: string; message: string };
+  | { type: "chat_message"; fromUserId: string; message: string; timestamp: string };
 
 class SocketClient {
   private ws: WebSocket | null = null;
   private listeners = new Map<string, Function[]>();
+  private messageQueue: any[] = [];
+  private userId: string | null = null;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   connect(userId: string) {
-    if (this.ws?.readyState === WebSocket.OPEN) return;
+    this.userId = userId;
 
-    this.ws = new WebSocket("ws://localhost:3000");
+    if (
+      this.ws?.readyState === WebSocket.OPEN ||
+      this.ws?.readyState === WebSocket.CONNECTING
+    ) {
+      if (this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify({ type: "online", userId }));
+      }
+      return;
+    }
 
-    this.ws.onopen = () => {
-      this.send({ type: "online", userId });
+    this._open(userId);
+  }
+
+  private _open(userId: string) {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+
+    const ws = new WebSocket("ws://localhost:3000");
+    this.ws = ws;
+
+    ws.onopen = () => {
+      ws.send(JSON.stringify({ type: "online", userId }));
+
+      const q = [...this.messageQueue];
+      this.messageQueue = [];
+      for (const msg of q) {
+        ws.send(JSON.stringify(msg));
+      }
     };
 
-    this.ws.onmessage = (event) => {
-      const data: WSMessage = JSON.parse(event.data);
-
-      const handlers = this.listeners.get(data.type) || [];
-      handlers.forEach((fn) => fn(data));
+    ws.onmessage = (event) => {
+      try {
+        const data: WSMessage = JSON.parse(event.data);
+        const handlers = this.listeners.get(data.type) ?? [];
+        handlers.forEach((fn) => fn(data));
+      } catch {
+      }
     };
 
-    this.ws.onclose = () => {
-      this.ws = null;
+    ws.onclose = () => {
+      if (this.ws === ws) this.ws = null;
+      if (this.userId) {
+        this.reconnectTimer = setTimeout(() => {
+          if (this.userId) this._open(this.userId);
+        }, 2000);
+      }
     };
+
+    ws.onerror = () => ws.close();
+  }
+
+  disconnect() {
+    this.userId = null;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    this.ws?.close();
+    this.ws = null;
+    this.messageQueue = [];
   }
 
   send(data: any) {
     if (this.ws?.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(data));
+    } else {
+      this.messageQueue.push(data);
     }
   }
 

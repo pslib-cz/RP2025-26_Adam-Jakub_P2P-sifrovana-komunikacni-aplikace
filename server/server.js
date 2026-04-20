@@ -96,6 +96,13 @@ wss.on("connection", (ws) => {
         await broadcastUsers();
       }
 
+      if (data.type === "get_users") {
+        const users = await getUsersWithStatus();
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "user_list", users }));
+        }
+      }
+
       if (data.type === "signal") {
         const targetWs = onlineUsers.get(data.targetUserId);
         if (!targetWs) return;

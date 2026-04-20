@@ -51,21 +51,12 @@ background: var(--white);
 }
 
 .footer {
-  flex-shrink: 0;
   background-color: var(--white);
   padding: 1rem 2rem;
-  border-top: 1px solid #e0e0e0;
-}
-
-.footerContent {
-  max-width: 1200px;
-  margin: 0 auto;
-
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 2rem;
 }
+
 
 .switchContainer {
   display: flex;
@@ -78,10 +69,14 @@ background: var(--white);
   gap: 1rem;
   cursor: pointer;
   user-select: none;
+  position: relative;
 }
 
 .switchInput {
-  display: none;
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .slider {
@@ -91,6 +86,7 @@ background: var(--white);
   border-radius: 50px;
   position: relative;
   transition: background-color 0.3s ease;
+  flex-shrink: 0;
 }
 
 .slider::before {
@@ -114,33 +110,35 @@ background: var(--white);
   transform: translateX(22px);
 }
 
+.switchInput:focus + .slider {
+  outline: 2px solid var(--active);
+  outline-offset: 2px;
+}
+
 .switchText {
   font-size: 1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text)
 }
 
 .profileButton {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
-  padding: 0.75rem 1.5rem;
-  border: 2px solid #667eea;
-  border-radius: 50px;
   background: #fff;
   color: #667eea;
-
-  font-size: 1rem;
+  border-radius: 50%;
+  padding: 0.3rem;
   font-weight: 600;
   cursor: pointer;
 
   transition: all 0.25s ease;
-  white-space: nowrap;
 }
-
+.profileButton img {
+width: 50px;
+height: 50px;
+}
 .profileButton:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }

@@ -54,7 +54,7 @@ export const Chat: React.FC<ChatProps> = ({
               className={`${styles.status} ${connected ? styles.online : styles.offline
                 }`}
             >
-              {connected ? "🟢 P2P připojeno" : "⚫ fallback režim"}
+              {connected ? "🟢 P2P připojeno" : "⚫ Fallback režim"}
             </span>
           </div>
 
@@ -104,7 +104,6 @@ export const Chat: React.FC<ChatProps> = ({
         )}
       </div>
 
-      {/* INPUT */}
       <footer className={styles.footer}>
         <form className={styles.inputForm} onSubmit={handleSendMessage}>
           <input

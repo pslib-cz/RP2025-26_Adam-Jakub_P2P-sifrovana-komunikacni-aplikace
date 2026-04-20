@@ -57,7 +57,7 @@ export const AllActiveUsers: React.FC<Props> = ({
               onClick={() => onUserClick?.(user)}
               className={styles.chatButton}
             >
-              💬
+              Chatovat
             </button>
           </div>
         ))}

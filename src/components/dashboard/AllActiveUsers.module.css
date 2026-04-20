@@ -135,13 +135,11 @@
 }
 
 .chatButton {
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  border-radius: 20px;
+  padding:  1rem 0.5rem;
   font-size: 1.2rem;
   cursor: pointer;
   display: flex;
@@ -151,8 +149,7 @@
 }
 
 .chatButton:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 14px rgba(102, 126, 234, 0.4);
 }
 
 .chatButton:active {
@@ -165,8 +162,6 @@
   font-size: 0.95rem;
   padding: 2rem 0;
 }
-
-/* Responsive design */
 @media (max-width: 768px) {
   .container {
     padding: 1.5rem;
@@ -183,8 +178,7 @@
   }
 
   .chatButton {
-    width: 35px;
-    height: 35px;
+    padding: 1rem;
     font-size: 1rem;
   }
 }

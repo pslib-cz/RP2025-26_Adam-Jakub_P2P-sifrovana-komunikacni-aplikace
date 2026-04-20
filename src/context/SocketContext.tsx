@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { socketClient } from "../services/socketClient";
+import { useAuth } from "./AuthContext";
 import type { UserData } from "../types/userdata";
 
 type SocketContextType = {
@@ -10,19 +11,17 @@ type SocketContextType = {
 const SocketContext = createContext<SocketContextType | null>(null);
 
 export const SocketProvider = ({
-  userId,
   children,
 }: {
-  userId?: string;
   children: React.ReactNode;
 }) => {
+  const { user } = useAuth();
   const [users, setUsers] = useState<UserData[]>([]);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (!userId) return;
-
-    socketClient.connect(userId);
+    if (!user?.userId) return;
+    socketClient.connect(user.userId);
 
     const handler = (data: any) => {
       setUsers(data.users);
@@ -31,10 +30,12 @@ export const SocketProvider = ({
 
     socketClient.on("user_list", handler);
 
+    socketClient.send({ type: "get_users" });
+
     return () => {
       socketClient.off("user_list", handler);
     };
-  }, [userId]);
+  }, [user?.userId]);
 
   return (
     <SocketContext.Provider value={{ users, connected }}>
@@ -45,6 +46,6 @@ export const SocketProvider = ({
 
 export const useSocket = () => {
   const ctx = useContext(SocketContext);
-  if (!ctx) throw new Error("useSocket must be used in provider");
+  if (!ctx) throw new Error("useSocket must be used within SocketProvider");
   return ctx;
 };
