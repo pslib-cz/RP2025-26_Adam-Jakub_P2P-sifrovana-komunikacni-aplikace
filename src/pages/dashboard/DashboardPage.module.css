@@ -8,7 +8,7 @@ body {
   height: 100vh;
   display: flex;
   flex-direction: column;
-background: var(--white);
+  background: var(--white);
 }
 
 .header {
@@ -18,7 +18,8 @@ background: var(--white);
   max-width: 130px;
   margin: 0 auto;
 }
-.container > h3 {
+
+.container>h3 {
   text-align: center;
 }
 
@@ -102,15 +103,15 @@ background: var(--white);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.switchInput:checked + .slider {
+.switchInput:checked+.slider {
   background: var(--active);
 }
 
-.switchInput:checked + .slider::before {
+.switchInput:checked+.slider::before {
   transform: translateX(22px);
 }
 
-.switchInput:focus + .slider {
+.switchInput:focus+.slider {
   outline: 2px solid var(--active);
   outline-offset: 2px;
 }
@@ -134,14 +135,18 @@ background: var(--white);
 
   transition: all 0.25s ease;
 }
+
 .profileButton img {
-width: 50px;
-height: 50px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
+
 .profileButton:hover {
   color: #fff;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
+
 @media (max-width: 768px) {
   .content {
     padding: 1rem;

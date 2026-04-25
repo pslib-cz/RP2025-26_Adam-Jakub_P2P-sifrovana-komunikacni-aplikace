@@ -1,41 +1,46 @@
 .container {
-  margin-bottom: 2rem;
+  margin-top: 2rem;
 }
 
 .container h3 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text)
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #eaeaf0;
+  font-weight: 500;
 }
 
 .conversationsList {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .conversationItem {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
-  border: none;
-  background: #f8f8f8;
-  border-radius: 12px;
+
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
+
+  background: linear-gradient(145deg, var(--text), var(--bg));
+  border: 2px solid var(--text);
+
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .conversationItem:hover {
-  background: #f0f0f0;
-  transform: translateX(4px);
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary);
 }
 
+/* Avatar sjednocený */
 .avatarContainer {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
 }
 
@@ -44,20 +49,23 @@
   height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ddd;
+  background-color: var(--text);
+  border: none;
 }
 
+/* Online indikátor */
 .onlineDot {
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 14px;
-  height: 14px;
-  background: #4caf50;
-  border: 2px solid white;
+  width: 10px;
+  height: 10px;
+  background: #4ade80;
+  border: 2px solid var(--bg);
   border-radius: 50%;
 }
 
+/* Info */
 .conversationInfo {
   flex: 1;
   min-width: 0;
@@ -73,31 +81,52 @@
 .username {
   margin: 0;
   font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  text-align: left;
+  color: #fff;
+  font-weight: 500;
 }
 
 .time {
   font-size: 0.75rem;
-  color: #999;
+  color: #888;
   white-space: nowrap;
   margin-left: 0.5rem;
 }
 
+.messageRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .lastMessage {
   margin: 0;
-  font-size: 0.875rem;
-  color: #666;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: left;
+}
+
+/* Badge sjednocený do stylu theme */
+.unreadBadge {
+  background: linear-gradient(135deg, var(--blue), var(--primary));
+  color: white;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+
+  min-width: 1.5rem;
+  text-align: center;
 }
 
 .empty {
-  color: #999;
+  opacity: 0.6;
+  color: #eaeaf0;
   text-align: center;
   padding: 2rem 1rem;
-  font-size: 0.95rem;
 }

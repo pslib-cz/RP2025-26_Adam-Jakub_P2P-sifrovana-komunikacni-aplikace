@@ -24,6 +24,7 @@
   --active: #AEF044;
   --inactive: #C90E0E;
   --blue: #2563EB;
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,7 +38,8 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   min-height: 100%;

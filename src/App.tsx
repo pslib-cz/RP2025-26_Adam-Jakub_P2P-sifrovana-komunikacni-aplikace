@@ -10,6 +10,7 @@ import RegisterPage from "./pages/register/RegisterPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ChatPage from "./pages/chat/ChatPage";
 import HomePage from "./pages/home/HomePage";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 function App() {
   return (
@@ -25,6 +26,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/pages/ProfilePage"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

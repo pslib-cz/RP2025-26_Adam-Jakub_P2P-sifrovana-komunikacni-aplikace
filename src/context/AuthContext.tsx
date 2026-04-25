@@ -11,6 +11,7 @@ interface AuthContextType {
   login: (e: string, p: string) => Promise<void>;
   logout: () => Promise<void>;
   updateLetsTalk: () => Promise<void>;
+  updateProfile: (username?: string, profilePicture?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,6 +67,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       storage.set("authUser", updated);
     });
 
+  const updateProfile = (username?: string, profilePicture?: string) =>
+    withError(async () => {
+      if (!user) throw new Error("No user");
+
+      const updated = await client.auth.updateProfile(user.userId, username, profilePicture);
+      setUser(updated);
+      storage.set("authUser", updated);
+    });
+
   return (
     <AuthContext.Provider
       value={{
@@ -76,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         updateLetsTalk,
+        updateProfile,
       }}
     >
       {children}

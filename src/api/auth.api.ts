@@ -7,6 +7,7 @@ export interface AuthUser {
   email: string;
   isOnline: boolean;
   letsTalk?: boolean;
+  profilePicture?: string;
 }
 
 export const authApi = {
@@ -27,4 +28,10 @@ export const authApi = {
       method: "POST",
       body: JSON.stringify({ userId }),
     }),
+
+  updateProfile: (userId: string, username?: string, profilePicture?: string) =>
+    request<{ user: AuthUser }>("/auth/profile", {
+      method: "PUT",
+      body: JSON.stringify({ userId, username, profilePicture }),
+    }).then(r => r.user),
 };

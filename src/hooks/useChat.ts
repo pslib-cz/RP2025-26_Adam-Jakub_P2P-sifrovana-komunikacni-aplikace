@@ -16,7 +16,45 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     setMessages(
       stored.map((m, i) => ({ id: i, ...m, isOwn: m.fromUserId === currentUserId }))
     );
-    setLoading(false);
+    fetch(`http://localhost:3001/api/messages/history/${currentUserId}/${targetUserId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.messages) {
+          const serverMsgs = data.messages.map((m: any) => ({
+            fromUserId: m.senderId,
+            message: m.content,
+            timestamp: m.timestamp,
+          }));
+
+          const allMsgs = [...chatService.getMessages(currentUserId, targetUserId)];
+          let changed = false;
+
+          for (const sMsg of serverMsgs) {
+            const exists = allMsgs.find(
+              (m) => m.timestamp === sMsg.timestamp && m.message === sMsg.message
+            );
+            if (!exists) {
+              allMsgs.push(sMsg);
+              changed = true;
+            }
+          }
+
+          if (changed) {
+            allMsgs.sort(
+              (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
+            localStorage.setItem(
+              chatService.getKey(currentUserId, targetUserId),
+              JSON.stringify(allMsgs)
+            );
+            setMessages(
+              allMsgs.map((m, i) => ({ id: i, ...m, isOwn: m.fromUserId === currentUserId }))
+            );
+          }
+        }
+      })
+      .catch((err) => console.error("Fetch history err:", err))
+      .finally(() => setLoading(false));
   }, [currentUserId, targetUserId]);
 
   useEffect(() => {
@@ -37,7 +75,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
       const q = [...iceQueue];
       iceQueue = [];
       for (const c of q) {
-        try { await pc.addIceCandidate(c); } catch { /* ignore */ }
+        try { await pc.addIceCandidate(c); } catch { }
       }
     };
 
@@ -49,7 +87,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
       };
       dc.onclose = () => setConnected(false);
       dc.onmessage = (e) => {
-        try { handleIncoming(JSON.parse(e.data)); } catch { /* ignore */ }
+        try { handleIncoming(JSON.parse(e.data)); } catch { }
       };
     };
 

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -36,15 +36,31 @@ function DashboardPage() {
     );
   }, [letsTalkUsers, user?.userId]);
 
+  const [serverConvos, setServerConvos] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user?.userId) return;
+    fetch(`http://localhost:3001/api/messages/conversations/${user.userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setServerConvos(data.conversations);
+        }
+      })
+      .catch(console.error);
+  }, [user?.userId]);
+
   const conversations = useMemo<Conversation[]>(() => {
     if (!user?.userId) return [];
     if (!allUsers?.length) return [];
 
     return chatService.buildConversations(
       user.userId,
-      allUsers
+      allUsers,
+      serverConvos
     );
-  }, [user?.userId, allUsers]);
+  }, [user?.userId, allUsers, serverConvos]);
+
 
   const handleUserClick = (u: UserData) => {
     if (u.userId === user?.userId) return;
@@ -105,9 +121,8 @@ function DashboardPage() {
   </label>
   <div>
     <Link to="/pages/ProfilePage" className={styles.profileButton}>
-    <img src="/pfp-default.png" alt="Profil" />
+      <img src={user.profilePicture || "/pfp-default.png"} alt="Profil" />
     </Link>
-
   </div>
 </footer>
     </main>

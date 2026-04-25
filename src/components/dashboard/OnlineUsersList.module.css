@@ -48,13 +48,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: none;
   background: var(--primary);
-  color: var(--text);
-  font-size: 1rem;
+  color: white;
+  font-size: 0.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
@@ -89,7 +89,7 @@
   border-radius: 12px;
   transition: all 0.3s ease;
   flex-shrink: 0;
-  min-width: 100px;
+  min-width: 80px;
 }
 
 .userCard:hover {
@@ -98,8 +98,8 @@
 
 .avatarContainer {
   position: relative;
-  width: 70px;
-  height: 70px;
+  width: 50px;
+  height: 50px;
 }
 
 .avatar {
@@ -108,7 +108,7 @@
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--primary);
-  background-color: var(--text);
+  background-color: white;
 }
 
 .onlineDot {
@@ -118,7 +118,7 @@
   width: 16px;
   height: 16px;
   background: #4caf50;
-  border: 3px solid white;
+  border: 2px solid white;
   border-radius: 50%;
 }
 
@@ -127,7 +127,6 @@
   color: var(--text);
   font-weight: 500;
   text-overflow: ellipsis;
-  overflow: hidden;
   white-space: nowrap;
   max-width: 90px;
 }

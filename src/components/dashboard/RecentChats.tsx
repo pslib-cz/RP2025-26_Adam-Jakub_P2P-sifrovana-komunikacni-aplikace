@@ -14,7 +14,7 @@ export const RecentChats: React.FC<RecentChatsProps> = ({
   if (!conversations.length) {
     return (
       <div className={styles.container}>
-        <h3>Nedávné konverzace</h3>
+        <h3>Poslední zprávy</h3>
         <p className={styles.empty}>Zatím nemáte žádné konverzace</p>
       </div>
     );
@@ -22,7 +22,7 @@ export const RecentChats: React.FC<RecentChatsProps> = ({
 
   return (
     <div className={styles.container}>
-      <h3>Nedávné konverzace</h3>
+      <h3>Poslední zprávy</h3>
 
       <div className={styles.conversationsList}>
         {conversations.map((conversation) => {
@@ -55,11 +55,18 @@ export const RecentChats: React.FC<RecentChatsProps> = ({
                   <span className={styles.time}>{timeLabel}</span>
                 </div>
 
-                {conversation.lastMessage && (
-                  <p className={styles.lastMessage}>
-                    {conversation.lastMessage}
-                  </p>
-                )}
+                <div className={styles.messageRow}>
+                  {conversation.lastMessage && (
+                    <p className={styles.lastMessage}>
+                      {conversation.lastMessage}
+                    </p>
+                  )}
+                  {!!conversation.unreadCount && conversation.unreadCount > 0 && (
+                    <span className={styles.unreadBadge}>
+                      {conversation.unreadCount}
+                    </span>
+                  )}
+                </div>
               </div>
             </button>
           );

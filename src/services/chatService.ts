@@ -1,5 +1,3 @@
-// src/services/chatService.ts
-
 export interface ChatMessage {
   fromUserId: string;
   message: string;
@@ -13,6 +11,7 @@ export interface Conversation {
   lastMessageTime: string;
   isOnline: boolean;
   profilePicture?: string;
+  unreadCount?: number;
 }
 
 export const chatService = {
@@ -32,8 +31,20 @@ export const chatService = {
     localStorage.setItem(key, JSON.stringify(messages));
   },
 
-  buildConversations(userId: string, users: any[]): Conversation[] {
-    const conversations: Conversation[] = [];
+  buildConversations(userId: string, users: any[], serverConvos: any[] = []): Conversation[] {
+    const map = new Map<string, Conversation>();
+
+    for (const sc of serverConvos) {
+      const user = users.find((u) => u.userId === sc.userId);
+      map.set(sc.userId, {
+        userId: sc.userId,
+        username: user?.username || sc.userId,
+        lastMessage: sc.lastMessage,
+        lastMessageTime: sc.lastMessageTime,
+        isOnline: user?.isOnline || false,
+        unreadCount: sc.unreadCount || 0,
+      });
+    }
 
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -46,19 +57,26 @@ export const chatService = {
       const last = messages[messages.length - 1];
       const user = users.find((u) => u.userId === targetId);
 
-      conversations.push({
-        userId: targetId,
-        username: user?.username || targetId,
-        lastMessage: last.message,
-        lastMessageTime: last.timestamp,
-        isOnline: user?.isOnline || false,
-      });
+      if (!map.has(targetId)) {
+        map.set(targetId, {
+          userId: targetId,
+          username: user?.username || targetId,
+          lastMessage: last.message,
+          lastMessageTime: last.timestamp,
+          isOnline: user?.isOnline || false,
+          unreadCount: 0,
+        });
+      } else {
+        const existing = map.get(targetId)!;
+        if (new Date(last.timestamp).getTime() > new Date(existing.lastMessageTime).getTime()) {
+          existing.lastMessage = last.message;
+          existing.lastMessageTime = last.timestamp;
+        }
+      }
     }
 
-    return conversations.sort(
-      (a, b) =>
-        new Date(b.lastMessageTime).getTime() -
-        new Date(a.lastMessageTime).getTime()
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime()
     );
   },
 };
