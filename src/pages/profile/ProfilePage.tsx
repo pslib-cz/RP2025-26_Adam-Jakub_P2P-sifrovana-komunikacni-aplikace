@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./ProfilePage.module.css";
-
+import { Pencil } from "lucide-react";
 function ProfilePage() {
   const navigate = useNavigate();
   const { user, updateProfile, logout } = useAuth();
@@ -49,7 +49,7 @@ function ProfilePage() {
       setLoading(true);
       setError(null);
       await updateProfile(username, profilePicture);
-      navigate("/pages/DashboardPage");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Nepodařilo se aktualizovat profil.");
     } finally {
@@ -68,14 +68,12 @@ function ProfilePage() {
 
   return (
     <main className={styles.main}>
+      <div className={styles.content}>
       <header className={styles.header}>
-        <button onClick={() => navigate(-1)} className={styles.backButton}>
-          ←
-        </button>
-        <h2 className={styles.headerTitle}>Upravit profil</h2>
+        <h1 className={styles.headerTitle}>Upravit profil</h1>
       </header>
 
-      <div className={styles.content}>
+      
         <div className={styles.avatarSection}>
           <img
             src={profilePicture}
@@ -93,7 +91,7 @@ function ProfilePage() {
           />
 
           <label htmlFor="avatarUpload" className={styles.avatarLabel}>
-            Změnit fotku
+           Upravit obrázek <Pencil />
           </label>
         </div>
 

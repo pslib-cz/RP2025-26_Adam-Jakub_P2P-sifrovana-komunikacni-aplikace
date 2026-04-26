@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useChat } from "../../hooks/useChat";
 import styles from "./Chat.module.css";
-
+import { ArrowLeft, SendHorizontal } from 'lucide-react';
 interface ChatProps {
   currentUserId: string;
   targetUserId: string;
@@ -58,15 +58,7 @@ export const Chat: React.FC<ChatProps> = ({
             </span>
           </div>
 
-          {onClose && (
-            <button
-              className={styles.closeButton}
-              onClick={onClose}
-              aria-label="Zavřít chat"
-            >
-              ✕
-            </button>
-          )}
+
         </div>
       </header>
 
@@ -112,7 +104,7 @@ export const Chat: React.FC<ChatProps> = ({
             placeholder={
               connected
                 ? "Napište zprávu..."
-                : "Offline zpráva (odešle se přes server)"
+                : "Offline zpráva"
             }
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -125,7 +117,7 @@ export const Chat: React.FC<ChatProps> = ({
             disabled={!inputValue.trim()}
             title={connected ? "Odeslat (P2P)" : "Odeslat (fallback)"}
           >
-            ➤
+            <SendHorizontal size={20}/>
           </button>
         </form>
       </footer>

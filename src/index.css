@@ -4,8 +4,6 @@
   font-family: "Kodchasan", "Inter", sans-serif;
 
   color-scheme: dark light;
-  background-color: #ffffff;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -24,6 +22,7 @@
   --active: #AEF044;
   --inactive: #C90E0E;
   --blue: #2563EB;
+
 
 }
 
@@ -59,7 +58,6 @@ body {
 button {
   border-radius: 8px;
   border: none;
-  padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
