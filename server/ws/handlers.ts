@@ -14,8 +14,7 @@ export async function getUsersWithStatus() {
         userId: u.userId,
         username: u.username,
         letsTalk: Boolean(u.letsTalk),
-        isOnline: onlineUsers.has(u.userId),
-        profilePicture: u.profilePicture,
+        isOnline: onlineUsers.has(u.userId)
     }));
 }
 
