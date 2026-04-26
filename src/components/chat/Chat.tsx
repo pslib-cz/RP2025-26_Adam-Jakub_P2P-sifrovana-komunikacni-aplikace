@@ -45,7 +45,7 @@ export const Chat: React.FC<ChatProps> = ({
   };
 
   return (
-    <div className={styles.chatContainer}>
+    <main className={styles.chatContainer}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <div className={styles.userInfo}>
@@ -129,7 +129,7 @@ export const Chat: React.FC<ChatProps> = ({
           </button>
         </form>
       </footer>
-    </div>
+    </main>
   );
 };
 

@@ -3,8 +3,8 @@ import styles from "../login/LoginPage.module.css";
 
 export default function RegisterPage() {
   return (
-    <div className={styles.authContainer}>
+    <main className={styles.authContainer}>
         <RegisterForm />
-    </div>
+    </main>
   );
 }

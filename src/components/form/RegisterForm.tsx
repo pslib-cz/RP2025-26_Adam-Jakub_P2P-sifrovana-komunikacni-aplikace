@@ -37,7 +37,7 @@ export const RegisterForm: React.FC = () => {
 
       setLoading(true);
       await register(formData.userId, formData.username, formData.email, formData.password);
-      navigate("/pages/DashboardPage");
+      navigate("/dashboard");
     } catch (err: any) {
       if (err.errors) {
         const validationErrors: Partial<RegisterInput> = {};
@@ -56,7 +56,7 @@ export const RegisterForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.authForm}>
-      <h2>Vytvořit účet</h2>
+      <h1>Vytvořit účet</h1>
 
       {apiError && <div className={`${styles.alert} ${styles["alert--error"]}`}>{apiError}</div>}
 
@@ -120,7 +120,7 @@ export const RegisterForm: React.FC = () => {
       </button>
 
       <p className={styles.authSwitch}>
-        Už máte účet? <Link to="/pages/LoginPage">Přihlaste se</Link>
+        Už máte účet? <Link to="/login">Přihlaste se</Link>
       </p>
     </form>
   );

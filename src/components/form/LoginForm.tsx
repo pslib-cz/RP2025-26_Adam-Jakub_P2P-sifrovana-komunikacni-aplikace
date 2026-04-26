@@ -34,7 +34,7 @@ export const LoginForm: React.FC = () => {
 
       setLoading(true);
       await login(formData.email, formData.password);
-      navigate("/pages/DashboardPage");
+      navigate("/dashboard");
     } catch (err: any) {
       if (err.errors) {
         const validationErrors: Partial<LoginInput> = {};
@@ -53,7 +53,7 @@ export const LoginForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className={styles.authForm}>
-      <h2>Přihlášení</h2>
+      <h1>Přihlášení</h1>
 
       {apiError && <div className={`${styles.alert} ${styles["alert--error"]}`}>{apiError}</div>}
 
@@ -84,7 +84,7 @@ export const LoginForm: React.FC = () => {
       </button>
 
       <p className={styles.authSwitch}>
-        Nemáte účet? <Link to="/pages/RegisterPage">Zaregistrujte se</Link>
+        Nemáte účet? <Link to="/register">Zaregistrujte se</Link>
       </p>
     </form>
   );

@@ -17,12 +17,14 @@ function App() {
     <AuthProvider>
       <SocketProvider>
         <Routes>
-          <Route path="/pages/HomePage" element={<HomePage />} />
-          <Route path="/pages/LoginPage" element={<LoginPage />} />
-          <Route path="/pages/RegisterPage" element={<RegisterPage />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           <Route
-            path="/pages/DashboardPage"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
@@ -31,7 +33,7 @@ function App() {
           />
 
           <Route
-            path="/pages/ProfilePage"
+            path="/profile"
             element={
               <ProtectedRoute>
                 <ProfilePage />
@@ -40,7 +42,7 @@ function App() {
           />
 
           <Route
-            path="/pages/ChatPage/:id"
+            path="/chat/:id"
             element={
               <ProtectedRoute>
                 <ChatPage />
@@ -48,7 +50,7 @@ function App() {
             }
           />
 
-          <Route path="*" element={<Navigate to="/pages/HomePage" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </SocketProvider>
     </AuthProvider>

@@ -64,11 +64,11 @@ function DashboardPage() {
 
   const handleUserClick = (u: UserData) => {
     if (u.userId === user?.userId) return;
-    navigate(`/pages/ChatPage/${u.userId}`);
+    navigate(`/chat/${u.userId}`);
   };
 
   const handleConversationClick = (c: Conversation) => {
-    navigate(`/pages/ChatPage/${c.userId}`);
+    navigate(`/chat/${c.userId}`);
   };
 
   const handleToggleLetsTalk = async () => {
@@ -120,7 +120,7 @@ function DashboardPage() {
     <span className={styles.switchText}>LetsTalk</span>
   </label>
   <div>
-    <Link to="/pages/ProfilePage" className={styles.profileButton}>
+    <Link to="/profile" className={styles.profileButton}>
       <img src={user.profilePicture || "/pfp-default.png"} alt="Profil" />
     </Link>
   </div>

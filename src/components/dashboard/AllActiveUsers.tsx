@@ -46,6 +46,7 @@ export const AllActiveUsers: React.FC<Props> = ({
             <img
               src={user.profilePicture || "/pfp-default.png"}
               className={styles.avatar}
+              alt={user.username}
             />
 
             <div className={styles.userInfo}>

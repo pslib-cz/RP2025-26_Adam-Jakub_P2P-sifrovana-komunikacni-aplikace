@@ -28,7 +28,7 @@ export default function ChatPage() {
       currentUserId={user.userId}
       targetUserId={id}
       targetUsername={target?.username || "Unknown"}
-      onClose={() => navigate("/pages/DashboardPage")}
+      onClose={() => navigate("/dashboard")}
     />
   );
 }

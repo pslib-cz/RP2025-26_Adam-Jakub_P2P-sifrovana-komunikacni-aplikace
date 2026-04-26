@@ -20,7 +20,7 @@
   animation: slideUp 0.3s ease-out;
 }
 
-.authForm h2 {
+.authForm h1 {
   color: var(--text);
   text-align: center;
   margin: 0 0 2rem 0;

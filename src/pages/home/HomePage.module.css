@@ -38,7 +38,7 @@
   animation: fadeInScale 0.8s ease-out forwards;
 }
 
-h1 {
+.homeContainer h1 {
   font-size: var(--font-large);
   color: var(--text);
   animation: fadeInUp 0.8s ease-out 0.3s forwards;
@@ -71,4 +71,12 @@ h1 {
 .button:active {
  transform: scale(0.97);
  box-shadow: 7px 5px 56px -10px var(--primary);
+}
+.lcpFix {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 1px;
+  opacity: 0.01;
+  pointer-events: none;
 }

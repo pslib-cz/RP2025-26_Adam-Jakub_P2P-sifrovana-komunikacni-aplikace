@@ -82,6 +82,7 @@ function ProfilePage() {
             alt="Profile Avatar"
             className={styles.avatar}
           />
+
           <input
             type="file"
             accept="image/*"
@@ -90,6 +91,7 @@ function ProfilePage() {
             className={styles.avatarInput}
             id="avatarUpload"
           />
+
           <label htmlFor="avatarUpload" className={styles.avatarLabel}>
             Změnit fotku
           </label>
@@ -97,8 +99,9 @@ function ProfilePage() {
 
         <form onSubmit={handleSave} className={styles.form}>
           <div className={styles.inputGroup}>
-            <label>Uživatelské jméno</label>
+            <label htmlFor="username">Uživatelské jméno</label>
             <input
+              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -109,8 +112,9 @@ function ProfilePage() {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Email (nelze měnit)</label>
+            <label htmlFor="email">Email (nelze měnit)</label>
             <input
+              id="email"
               type="email"
               value={user.email}
               disabled
