@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useChat } from "../../hooks/useChat";
 import styles from "./Chat.module.css";
-import { ArrowLeft, SendHorizontal } from 'lucide-react';
+import { SendHorizontal } from 'lucide-react';
 interface ChatProps {
   currentUserId: string;
   targetUserId: string;
@@ -13,7 +13,6 @@ export const Chat: React.FC<ChatProps> = ({
   currentUserId,
   targetUserId,
   targetUsername,
-  onClose,
 }) => {
   const { messages, connected, loading, sendMessage } = useChat(
     currentUserId,

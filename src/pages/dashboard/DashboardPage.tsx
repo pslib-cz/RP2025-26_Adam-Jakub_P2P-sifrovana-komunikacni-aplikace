@@ -22,7 +22,6 @@ function DashboardPage() {
 
   const {
     allUsers = [],
-    onlineUsers = [],
     letsTalkUsers = [],
     loading = false,
   } = useAllUsers(user?.userId);
