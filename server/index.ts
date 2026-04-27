@@ -18,7 +18,7 @@ const server = http.createServer(app);
 
 const PORT: number = Number(process.env.PORT) || 3000;
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Unified server running on port ${PORT}`);
 });
 
@@ -41,8 +41,10 @@ app.get("/health", (_req: Request, res: Response) => {
 const frontendPath = path.join(process.cwd(), "../dist");
 if (fs.existsSync(frontendPath)) {
   app.use(express.static(frontendPath));
-  app.get("(.*)", (req, res, next) => {
-    if (req.path.startsWith("/api")) return next();
+  app.use((req, res, next) => {
+    if (req.path.startsWith("/api") || req.path === "/health") {
+      return next();
+    }
     res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
