@@ -3,6 +3,8 @@ import type { ChatMessage } from "../services/chatService";
 import { chatService } from "../services/chatService";
 import { socketClient } from "../services/socketClient";
 
+import { API_BASE_URL } from "../api/http";
+
 export const useChat = (currentUserId: string, targetUserId: string) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [connected, setConnected] = useState(false);
@@ -16,7 +18,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     setMessages(
       stored.map((m, i) => ({ id: i, ...m, isOwn: m.fromUserId === currentUserId }))
     );
-    fetch(`http://localhost:3001/api/messages/history/${currentUserId}/${targetUserId}`)
+    fetch(`${API_BASE_URL}/messages/history/${currentUserId}/${targetUserId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.messages) {

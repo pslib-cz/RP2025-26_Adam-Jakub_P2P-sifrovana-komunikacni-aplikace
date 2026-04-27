@@ -2,7 +2,14 @@ import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import * as schema from "./schema";
 
-const DB_PATH = "./database.sqlite";
+import path from "path";
+import fs from "fs";
+
+const DATA_DIR = "/data";
+const DB_NAME = "database.sqlite";
+const DB_PATH = fs.existsSync(DATA_DIR) 
+  ? path.join(DATA_DIR, DB_NAME) 
+  : path.join(process.cwd(), DB_NAME);
 
 const sqlite = new Database(DB_PATH);
 

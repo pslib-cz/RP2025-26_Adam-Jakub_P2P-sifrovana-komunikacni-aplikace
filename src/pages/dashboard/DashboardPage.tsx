@@ -13,6 +13,7 @@ import type { UserData } from "../../types/userdata";
 import type { Conversation } from "../../types/chat";
 
 import AnimatedLogo from "../../components/ui/logo/AnimatedLogo";
+import { API_BASE_URL } from "../../api/http";
 import styles from "./DashboardPage.module.css";
 
 function DashboardPage() {
@@ -40,7 +41,7 @@ function DashboardPage() {
 
   useEffect(() => {
     if (!user?.userId) return;
-    fetch(`http://localhost:3001/api/messages/conversations/${user.userId}`)
+    fetch(`${API_BASE_URL}/messages/conversations/${user.userId}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {

@@ -9,14 +9,23 @@ import messageRoutes from "./routes/messageRoutes";
 import { handleConnection, getUsersWithStatus, onlineUsers } from "./ws/handlers";
 import { ExtendedWebSocket } from "./types/ws.types";
 
-const app = express();
+import http from "http";
+import path from "path";
+import fs from "fs";
 
-const PORT: number = 3001;
-const WS_PORT: number = 3000;
+const app = express();
+const server = http.createServer(app);
+
+const PORT: number = Number(process.env.PORT) || 3000;
+
+server.listen(PORT, () => {
+  console.log(`Unified server running on port ${PORT}`);
+});
 
 app.use(cors());
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ limit: "5mb", extended: true }));
+
 db.initialize().catch((err: Error) => {
   console.error("Database initialization failed:", err);
   process.exit(1);
@@ -29,16 +38,22 @@ app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok" });
 });
 
+const frontendPath = path.join(process.cwd(), "../dist");
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error(err);
   res.status(500).json({ message: err.message });
 });
-app.listen(PORT, () => {
-  console.log(`API server http://localhost:${PORT}`);
-});
 
-const wss = new WebSocketServer({ port: WS_PORT });
-console.log(`WS server ws://localhost:${WS_PORT}`);
+const wss = new WebSocketServer({ server });
+console.log(`Unified server running on port ${PORT}`);
 
 wss.on("connection", (ws: ExtendedWebSocket) => {
   handleConnection(wss, ws);
