@@ -39,7 +39,7 @@
   height: 48px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: var(--text);
+  background-color: #EDEDED;
 }
 
 .userInfo {
@@ -49,7 +49,7 @@
 .userInfo h4 {
   margin: 0;
   font-size: 1rem;
-  color: #fff;
+  color: var(--text);
 }
 
 .userInfo p {
