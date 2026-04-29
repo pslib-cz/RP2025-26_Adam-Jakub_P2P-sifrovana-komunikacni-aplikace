@@ -26,13 +26,14 @@ export const Chat: React.FC<ChatProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!inputValue.trim()) return;
 
-    sendMessage(inputValue);
+    const text = inputValue;
     setInputValue("");
+    await sendMessage(text);
   };
 
   const formatTime = (dateString: string): string => {

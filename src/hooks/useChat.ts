@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ChatMessage } from "../services/chatService";
 import { chatService } from "../services/chatService";
 import { socketClient } from "../services/socketClient";
+import { encryptMessage, safeDecrypt } from "../services/cryptoService";
 
 import { API_BASE_URL } from "../api/http";
 
@@ -20,13 +21,15 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     );
     fetch(`${API_BASE_URL}/messages/history/${currentUserId}/${targetUserId}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then(async (data) => {
         if (data.success && data.messages) {
-          const serverMsgs = data.messages.map((m: any) => ({
-            fromUserId: m.senderId,
-            message: m.content,
-            timestamp: m.timestamp,
-          }));
+          const serverMsgs = await Promise.all(
+            data.messages.map(async (m: any) => ({
+              fromUserId: m.senderId,
+              message: await safeDecrypt(m.content, currentUserId, targetUserId),
+              timestamp: m.timestamp,
+            }))
+          );
 
           const allMsgs = [...chatService.getMessages(currentUserId, targetUserId)];
           let changed = false;
@@ -59,6 +62,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
       .finally(() => setLoading(false));
   }, [currentUserId, targetUserId]);
 
+
   useEffect(() => {
     const polite = currentUserId > targetUserId;
     let makingOffer = false;
@@ -84,12 +88,15 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     const setupDc = (dc: RTCDataChannel) => {
       dcRef.current = dc;
       dc.onopen = () => {
-        console.log("[P2P] data channel open");
         setConnected(true);
       };
       dc.onclose = () => setConnected(false);
-      dc.onmessage = (e) => {
-        try { handleIncoming(JSON.parse(e.data)); } catch { }
+      dc.onmessage = async (e) => {
+        try {
+          const raw = JSON.parse(e.data);
+          const plaintext = await safeDecrypt(raw.message, targetUserId, currentUserId);
+          handleIncoming({ ...raw, message: plaintext });
+        } catch { }
       };
     };
 
@@ -104,7 +111,6 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     };
 
     pc.onconnectionstatechange = () => {
-      console.log("[P2P] connection state:", pc.connectionState);
       if (pc.connectionState === "connected") setConnected(true);
       if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
         setConnected(false);
@@ -116,16 +122,14 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     pc.onnegotiationneeded = async () => {
       try {
         makingOffer = true;
-        console.log("[P2P] negotiation needed, creating offer");
-        await pc.setLocalDescription();       
+        await pc.setLocalDescription();
         socketClient.send({
           type: "signal",
           targetUserId,
           fromUserId: currentUserId,
           signal: pc.localDescription,
         });
-      } catch (err) {
-        console.error("[P2P] negotiation error", err);
+      } catch {
       } finally {
         makingOffer = false;
       }
@@ -150,10 +154,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
           (makingOffer || pc.signalingState !== "stable");
 
         ignoreOffer = !polite && offerCollision;
-        if (ignoreOffer) {
-          console.log("[P2P] ignoring colliding offer (impolite)");
-          return;
-        }
+        if (ignoreOffer) return;
 
         await pc.setRemoteDescription(rtcDesc);
         await flushIceQueue();
@@ -167,8 +168,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
             signal: pc.localDescription,
           });
         }
-      } catch (err) {
-        console.error("[P2P] signal handling error", err);
+      } catch {
       }
     };
 
@@ -182,16 +182,16 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
         } else {
           iceQueue.push(data.candidate);
         }
-      } catch (err) {
-        console.error("[P2P] ice candidate error", err);
+      } catch {
       }
     };
 
-    const onChatMessage = (data: any) => {
+    const onChatMessage = async (data: any) => {
       if (data.fromUserId !== targetUserId) return;
+      const plaintext = await safeDecrypt(data.message, data.fromUserId, currentUserId);
       handleIncoming({
         fromUserId: data.fromUserId,
-        message: data.message,
+        message: plaintext,
         timestamp: data.timestamp ?? new Date().toISOString(),
       });
     };
@@ -228,21 +228,24 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     ]);
   };
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
+    const timestamp = new Date().toISOString();
+    const encrypted = await encryptMessage(text, currentUserId, targetUserId);
+
     const msg: ChatMessage = {
       fromUserId: currentUserId,
       message: text,
-      timestamp: new Date().toISOString(),
+      timestamp,
     };
 
     if (dcRef.current?.readyState === "open") {
-      dcRef.current.send(JSON.stringify(msg));
+      dcRef.current.send(JSON.stringify({ ...msg, message: encrypted }));
     } else {
       socketClient.send({
         type: "chat_message",
         targetUserId,
         fromUserId: currentUserId,
-        message: text,
+        message: encrypted,
       });
     }
 

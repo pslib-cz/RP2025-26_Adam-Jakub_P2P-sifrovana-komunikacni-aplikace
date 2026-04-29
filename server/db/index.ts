@@ -38,8 +38,6 @@ function ensureSchema() {
       lastSeen       TEXT
     );
 
-    DROP TABLE IF EXISTS messages;
-
     CREATE TABLE IF NOT EXISTS messages (
       id             INTEGER PRIMARY KEY AUTOINCREMENT,
       senderId       TEXT NOT NULL,

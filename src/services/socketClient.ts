@@ -36,7 +36,7 @@ class SocketClient {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const defaultWsUrl = `${protocol}//${window.location.host}`;
     const wsUrl = import.meta.env.VITE_WS_URL || defaultWsUrl;
-    
+
     const ws = new WebSocket(wsUrl);
     this.ws = ws;
 
