@@ -1,5 +1,5 @@
 import React from "react";
-import type { Conversation } from "../../services/chatService";
+import type { Conversation } from "../../types/chat";
 import styles from "./RecentChats.module.css";
 import formatTime from "../../utils/formatTime";
 interface RecentChatsProps {

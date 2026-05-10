@@ -11,4 +11,5 @@ export interface Conversation {
   lastMessageTime: string;
   isOnline: boolean;
   profilePicture?: string;
+  unreadCount?: number;
 }
