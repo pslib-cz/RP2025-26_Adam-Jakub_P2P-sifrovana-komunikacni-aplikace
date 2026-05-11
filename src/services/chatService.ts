@@ -27,6 +27,7 @@ export const chatService = {
         lastMessage: sc.lastMessage,
         lastMessageTime: sc.lastMessageTime,
         isOnline: user?.isOnline || false,
+        profilePicture: user?.profilePicture || "/pfp-default.png",
         unreadCount: sc.unreadCount || 0,
       });
     }
@@ -49,6 +50,7 @@ export const chatService = {
           lastMessage: last.message,
           lastMessageTime: last.timestamp,
           isOnline: user?.isOnline || false,
+          profilePicture: user?.profilePicture || "/pfp-default.png",
           unreadCount: 0,
         });
       } else {

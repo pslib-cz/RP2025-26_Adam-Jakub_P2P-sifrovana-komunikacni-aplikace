@@ -67,8 +67,15 @@ setInterval(async () => {
     const online = users.filter((u: any) => u.isOnline);
     const letsTalk = users.filter((u: any) => u.isOnline && u.letsTalk);
 
+    const usersForLog = users.map((u: any) => ({
+      userId: u.userId,
+      username: u.username,
+      isOnline: u.isOnline,
+      letsTalk: u.letsTalk,
+    }));
+
     console.log("\n========== SERVER STATUS ==========");
-    console.table(users);
+    console.table(usersForLog);
     console.log(`🟢 Online: ${online.length}`);
     console.log(`💬 LetsTalk online: ${letsTalk.length}`);
     console.log("==================================\n");

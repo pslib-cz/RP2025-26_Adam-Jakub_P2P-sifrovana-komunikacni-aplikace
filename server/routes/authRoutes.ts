@@ -147,10 +147,15 @@ router.put("/profile", async (req: Request, res: Response) => {
         }
 
         if (profilePicture) {
-            if (!profilePicture.startsWith("data:image/")) {
+
+            const isDefault = profilePicture === "/pfp-default.png";
+            const isBase64Image = profilePicture.startsWith("data:image/");
+            
+            if (!isDefault && !isBase64Image) {
                 return res.status(400).json({ success: false, message: "Neplatný formát obrázku!" });
             }
-            if (profilePicture.length > 3 * 1024 * 1024) { // ~2.25MB in base64 string length
+            
+            if (isBase64Image && profilePicture.length > 3 * 1024 * 1024) {
                 return res.status(400).json({ success: false, message: "Obrázek je příliš velký!" });
             }
         }

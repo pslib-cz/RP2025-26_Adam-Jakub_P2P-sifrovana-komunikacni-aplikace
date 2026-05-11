@@ -14,6 +14,7 @@ export async function getUsersWithStatus() {
         userId: u.userId,
         username: u.username,
         letsTalk: Boolean(u.letsTalk),
+        profilePicture: u.profilePicture || "/pfp-default.png",
         isOnline: onlineUsers.has(u.userId)
     }));
 }

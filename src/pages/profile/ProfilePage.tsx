@@ -48,7 +48,8 @@ function ProfilePage() {
     try {
       setLoading(true);
       setError(null);
-      await updateProfile(username, profilePicture);
+      const newProfilePicture = profilePicture !== user?.profilePicture ? profilePicture : undefined;
+      await updateProfile(username, newProfilePicture);
       navigate("/dashboard");
     } catch (err: any) {
       setError(err.message || "Nepodařilo se aktualizovat profil.");

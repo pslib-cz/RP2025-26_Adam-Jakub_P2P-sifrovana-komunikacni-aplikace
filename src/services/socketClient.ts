@@ -1,5 +1,5 @@
 type WSMessage =
-  | { type: "user_list"; users: any[] }
+  | { type: "user_list"; users: { userId: string; username: string; letsTalk: boolean; profilePicture: string; isOnline: boolean }[] }
   | { type: "signal"; fromUserId: string; signal: any }
   | { type: "ice_candidate"; fromUserId: string; candidate: any }
   | { type: "chat_message"; fromUserId: string; message: string; timestamp: string };
