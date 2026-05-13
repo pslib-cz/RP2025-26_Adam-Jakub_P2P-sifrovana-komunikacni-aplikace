@@ -246,6 +246,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
         targetUserId,
         fromUserId: currentUserId,
         message: encrypted,
+        timestamp,
       });
     }
 

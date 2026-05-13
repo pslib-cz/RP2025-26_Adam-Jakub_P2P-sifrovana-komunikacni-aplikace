@@ -56,12 +56,12 @@ class MessageService {
         return Array.from(convos.values()).sort((a, b) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime());
     }
 
-    async saveMessage(senderId: string, receiverId: string, content: string) {
+    async saveMessage(senderId: string, receiverId: string, content: string, timestamp?: string) {
         const result = await db.insert(messages).values({
             senderId,
             receiverId,
             content,
-            timestamp: new Date().toISOString(),
+            timestamp: timestamp || new Date().toISOString(),
             isRead: 0,
         }).returning();
         return result[0];

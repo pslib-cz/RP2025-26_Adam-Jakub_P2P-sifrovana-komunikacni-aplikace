@@ -88,7 +88,7 @@ export function handleConnection(wss: WebSocketServer, ws: ExtendedWebSocket) {
             if (data.type === "chat_message") {
                 const senderId = data.fromUserId || ws.userId;
                 const receiverId = data.targetUserId;
-                const savedMsg = await messageService.saveMessage(senderId, receiverId, data.message);
+                const savedMsg = await messageService.saveMessage(senderId, receiverId, data.message, data.timestamp);
 
                 const targetWs = onlineUsers.get(receiverId);
                 if (targetWs && targetWs.readyState === 1) {

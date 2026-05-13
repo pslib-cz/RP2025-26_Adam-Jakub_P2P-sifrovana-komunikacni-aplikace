@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useChat } from "../../hooks/useChat";
+import { useNavigate } from "react-router-dom";
 import styles from "./Chat.module.css";
-import { SendHorizontal } from 'lucide-react';
+import { SendHorizontal, ChevronLeft } from 'lucide-react';
 interface ChatProps {
   currentUserId: string;
   targetUserId: string;
@@ -18,7 +19,7 @@ export const Chat: React.FC<ChatProps> = ({
     currentUserId,
     targetUserId
   );
-
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +49,9 @@ export const Chat: React.FC<ChatProps> = ({
     <main className={styles.chatContainer}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
+          <button className={styles.backButton} onClick={() => navigate("/dashboard")} title="Zpět na dashboard">
+            <ChevronLeft size={24} />
+          </button>
           <div className={styles.userInfo}>
             <h2>{targetUsername}</h2>
             <span
@@ -117,7 +121,7 @@ export const Chat: React.FC<ChatProps> = ({
             disabled={!inputValue.trim()}
             title={connected ? "Odeslat (P2P)" : "Odeslat (fallback)"}
           >
-            <SendHorizontal size={20}/>
+            <SendHorizontal size={20} />
           </button>
         </form>
       </footer>

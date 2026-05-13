@@ -14,6 +14,7 @@ import type { Conversation } from "../../types/chat";
 
 import AnimatedLogo from "../../components/ui/logo/AnimatedLogo";
 import { API_BASE_URL } from "../../api/http";
+import { safeDecrypt } from "../../services/cryptoService";
 import styles from "./DashboardPage.module.css";
 
 function DashboardPage() {
@@ -42,9 +43,15 @@ function DashboardPage() {
     if (!user?.userId) return;
     fetch(`${API_BASE_URL}/messages/conversations/${user.userId}`)
       .then((res) => res.json())
-      .then((data) => {
+      .then(async (data) => {
         if (data.success) {
-          setServerConvos(data.conversations);
+          const decryptedConvos = await Promise.all(
+            data.conversations.map(async (c: any) => ({
+              ...c,
+              lastMessage: await safeDecrypt(c.lastMessage, user.userId, c.userId)
+            }))
+          );
+          setServerConvos(decryptedConvos);
         }
       })
       .catch(console.error);

@@ -1,8 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
 import { useAuth } from "../../context/AuthContext";
+import { profileSchema } from "../../types/auth";
+import { getCleanErrorMessage } from "../../utils/errors";
 import styles from "./ProfilePage.module.css";
-import { Pencil } from "lucide-react";
+import { Pencil, ChevronLeft } from "lucide-react";
 function ProfilePage() {
   const navigate = useNavigate();
   const { user, updateProfile, logout } = useAuth();
@@ -48,11 +51,12 @@ function ProfilePage() {
     try {
       setLoading(true);
       setError(null);
+      profileSchema.parse({ username });
       const newProfilePicture = profilePicture !== user?.profilePicture ? profilePicture : undefined;
       await updateProfile(username, newProfilePicture);
       navigate("/dashboard");
     } catch (err: any) {
-      setError(err.message || "Nepodařilo se aktualizovat profil.");
+      setError(getCleanErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -71,6 +75,9 @@ function ProfilePage() {
     <main className={styles.main}>
       <div className={styles.content}>
       <header className={styles.header}>
+        <button className={styles.backButton} onClick={() => navigate("/dashboard")} title="Zpět na dashboard">
+          <ChevronLeft size={24} />
+        </button>
         <h1 className={styles.headerTitle}>Upravit profil</h1>
       </header>
 
