@@ -23,9 +23,15 @@ router.post(
         );
 
         if (missing) {
+            const fieldNames: Record<string, string> = {
+                userId: "ID uživatele",
+                username: "Uživatelské jméno",
+                email: "Email",
+                password: "Heslo"
+            };
             return res.status(400).json({
                 success: false,
-                message: `${missing} is required`,
+                message: `${fieldNames[missing] || missing} je povinný údaj`,
             });
         }
 
@@ -44,9 +50,13 @@ router.post(
         const missing = requireBody(["email", "password"], req.body);
 
         if (missing) {
+            const fieldNames: Record<string, string> = {
+                email: "Email",
+                password: "Heslo"
+            };
             return res.status(400).json({
                 success: false,
-                message: `${missing} is required`,
+                message: `${fieldNames[missing] || missing} je povinný údaj`,
             });
         }
 
@@ -67,7 +77,7 @@ router.post(
         if (!userId) {
             return res.status(400).json({
                 success: false,
-                message: "userId is required",
+                message: "ID uživatele je povinné",
             });
         }
 
@@ -97,7 +107,7 @@ router.get(
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "User not found",
+                message: "Uživatel nebyl nalezen",
             });
         }
 
@@ -116,7 +126,7 @@ router.post(
         if (!userId) {
             return res.status(400).json({
                 success: false,
-                message: "userId is required",
+                message: "ID uživatele je povinné",
             });
         }
 
@@ -143,7 +153,7 @@ router.put("/profile", async (req: Request, res: Response) => {
         const { userId, username, profilePicture } = req.body;
     
         if (!userId) {
-            return res.status(400).json({ success: false, message: "Missing userId" });
+            return res.status(400).json({ success: false, message: "Chybí ID uživatele" });
         }
 
         if (profilePicture) {

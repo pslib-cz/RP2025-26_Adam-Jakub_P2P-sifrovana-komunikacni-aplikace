@@ -29,23 +29,23 @@ export const LoginForm: React.FC = () => {
     setApiError(null);
     setErrors({});
 
-    try {
-      loginSchema.parse(formData);
+    const result = loginSchema.safeParse(formData);
+    if (!result.success) {
+      const validationErrors: Partial<LoginInput> = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+        validationErrors[field as keyof LoginInput] = issue.message;
+      });
+      setErrors(validationErrors);
+      return;
+    }
 
+    try {
       setLoading(true);
       await login(formData.email, formData.password);
       navigate("/dashboard");
     } catch (err: any) {
-      if (err.errors) {
-        const validationErrors: Partial<LoginInput> = {};
-        err.errors.forEach((error: any) => {
-          const field = error.path[0];
-          validationErrors[field as keyof LoginInput] = error.message;
-        });
-        setErrors(validationErrors);
-      } else {
-        setApiError(err.message || "Login failed");
-      }
+      setApiError(err.message || "Přihlášení selhalo");
     } finally {
       setLoading(false);
     }

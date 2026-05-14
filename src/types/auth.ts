@@ -3,42 +3,42 @@ import { z } from "zod";
 export const registerSchema = z.object({
   userId: z
     .string()
-    .min(3, "User ID must be at least 3 characters")
-    .max(15, "User ID must be at most 15 characters")
-    .regex(/^[a-zA-Z0-9_-]+$/, "User ID can only contain letters, numbers, hyphens and underscores"),
+    .min(3, "ID uživatele musí mít alespoň 3 znaky")
+    .max(15, "ID uživatele může mít maximálně 15 znaků")
+    .regex(/^[a-zA-Z0-9_-]+$/, "ID uživatele může obsahovat pouze písmena, čísla, pomlčky a podtržítka"),
 
   username: z
     .string()
-    .min(2, "Username must be at least 2 characters")
-    .max(15, "Username must be at most 15 characters"),
+    .min(2, "Uživatelské jméno musí mít alespoň 2 znaky")
+    .max(15, "Uživatelské jméno může mít maximálně 15 znaků"),
 
   email: z
     .string()
-    .email("Invalid email address"),
+    .email("Neplatná e-mailová adresa"),
 
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
+    .min(8, "Heslo musí mít alespoň 8 znaků")
+    .regex(/[A-Z]/, "Heslo musí obsahovat alespoň jedno velké písmeno")
+    .regex(/[a-z]/, "Heslo musí obsahovat alespoň jedno malé písmeno")
+    .regex(/[0-9]/, "Heslo musí obsahovat alespoň jedno číslo"),
 
   confirmPassword: z
     .string()
-    .min(8, "Confirm password is required"),
+    .min(8, "Potvrzení hesla je povinné"),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
+  message: "Hesla se neshodují",
   path: ["confirmPassword"],
 });
 
 export const loginSchema = z.object({
   email: z
     .string()
-    .email("Invalid email address"),
+    .email("Neplatná e-mailová adresa"),
 
   password: z
     .string()
-    .min(1, "Password is required"),
+    .min(1, "Heslo je povinné"),
 });
 
 export const profileSchema = z.object({

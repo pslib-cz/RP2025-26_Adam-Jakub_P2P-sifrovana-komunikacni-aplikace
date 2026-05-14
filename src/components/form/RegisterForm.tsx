@@ -32,23 +32,23 @@ export const RegisterForm: React.FC = () => {
     setApiError(null);
     setErrors({});
 
-    try {
-      registerSchema.parse(formData);
+    const result = registerSchema.safeParse(formData);
+    if (!result.success) {
+      const validationErrors: Partial<RegisterInput> = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+        validationErrors[field as keyof RegisterInput] = issue.message;
+      });
+      setErrors(validationErrors);
+      return;
+    }
 
+    try {
       setLoading(true);
       await register(formData.userId, formData.username, formData.email, formData.password);
       navigate("/dashboard");
     } catch (err: any) {
-      if (err.errors) {
-        const validationErrors: Partial<RegisterInput> = {};
-        err.errors.forEach((error: any) => {
-          const field = error.path[0];
-          validationErrors[field as keyof RegisterInput] = error.message;
-        });
-        setErrors(validationErrors);
-      } else {
-        setApiError(err.message || "Registration failed");
-      }
+      setApiError(err.message || "Registrace selhala");
     } finally {
       setLoading(false);
     }

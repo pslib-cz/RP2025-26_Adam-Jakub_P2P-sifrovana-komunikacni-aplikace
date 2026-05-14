@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setError(null);
       return await fn();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Error";
+      const message = err instanceof Error ? err.message : "Neznámá chyba";
       setError(message);
       throw err;
     }
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateLetsTalk = () =>
     withError(async () => {
-      if (!user) throw new Error("No user");
+      if (!user) throw new Error("Uživatel není přihlášen");
 
       const updated = await client.user.toggleLetsTalk(user.userId);
       setUser(updated);
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const updateProfile = (username?: string, profilePicture?: string) =>
     withError(async () => {
-      if (!user) throw new Error("No user");
+      if (!user) throw new Error("Uživatel není přihlášen");
 
       const updated = await client.auth.updateProfile(user.userId, username, profilePicture);
       setUser(updated);
@@ -96,6 +96,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  if (!ctx) throw new Error("useAuth musí být použit v rámci AuthProvideru");
   return ctx;
 };

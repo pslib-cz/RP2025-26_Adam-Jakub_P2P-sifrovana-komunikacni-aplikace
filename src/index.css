@@ -17,19 +17,39 @@
   --font-larger: 2rem;
 
   --primary: #787CC2;
-  --text: #1E1E1E;
-  --white: #EDEDED;
+  --primary-rgb: 120, 124, 194;
+  --blue: #2563EB;
   --active: #AEF044;
   --inactive: #C90E0E;
-  --blue: #2563EB;
 
+  /* Light Mode - Vaše barvy */
+  --white: #EDEDED;
+  --text: #1E1E1E;
 
+  /* Mapování pro Light Mode */
+  --bg: var(--white);
+  --card-bg: #ffffff;
+  --text-muted: #666666;
+  --border: rgba(0, 0, 0, 0.1);
+  --header-bg: rgba(237, 237, 237, 0.8);
+  --shadow: rgba(0, 0, 0, 0.05);
+  --shadow-hover: rgba(120, 124, 194, 0.2);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    /* Dark Mode - Prohození vašich barev */
     --white: #1E1E1E;
     --text: #EDEDED;
+
+    /* Mapování pro Dark Mode */
+    --bg: var(--white);
+    --card-bg: #2a2a2a;
+    --text-muted: #aaaaaa;
+    --border: rgba(255, 255, 255, 0.1);
+    --header-bg: rgba(30, 30, 30, 0.8);
+    --shadow: rgba(0, 0, 0, 0.4);
+    --shadow-hover: rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -41,7 +61,10 @@ html,
 body {
   margin: 0;
   padding: 0;
-  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg);
+  color: var(--text);
   overflow-x: hidden;
 }
 

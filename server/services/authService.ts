@@ -36,27 +36,42 @@ class AuthService {
             const user = existing[0];
 
             let field = "unknown";
-            if (user.userId === userId) field = "userId";
-            else if (user.email === email) field = "email";
-            else if (user.username === username) field = "username";
+            if (user.userId === userId) field = "ID uživatele";
+            else if (user.email === email) field = "e-mailem";
+            else if (user.username === username) field = "uživatelským jménem";
 
-            throw new Error(`User with this ${field} already exists`);
+            throw new Error(`Uživatel s tímto ${field} již existuje.`);
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        const result = await db
-            .insert(users)
-            .values({
-                userId,
-                username,
-                email,
-                password: hashedPassword,
-                isOnline: 1,
-                letsTalk: 1,
-                profilePicture: DEFAULT_PFP,
-            })
-            .returning();
+        let result;
+        try {
+            result = await db
+                .insert(users)
+                .values({
+                    userId,
+                    username,
+                    email,
+                    password: hashedPassword,
+                    isOnline: 1,
+                    letsTalk: 1,
+                    profilePicture: DEFAULT_PFP,
+                })
+                .returning();
+        } catch (err: any) {
+            if (err.message?.includes("UNIQUE constraint failed")) {
+                if (err.message.includes("users.username")) {
+                    throw new Error("Toto uživatelské jméno je již obsazené.");
+                }
+                if (err.message.includes("users.email")) {
+                    throw new Error("Tento e-mail je již zaregistrován.");
+                }
+                if (err.message.includes("users.userId")) {
+                    throw new Error("Toto ID uživatele již existuje.");
+                }
+            }
+            throw err;
+        }
 
         const user = result[0];
 
@@ -79,14 +94,14 @@ class AuthService {
             .limit(1);
 
         if (user.length === 0) {
-            throw new Error("User not found");
+            throw new Error("Uživatel nebyl nalezen.");
         }
 
         const dbUser = user[0];
 
         const isValid = await bcrypt.compare(password, dbUser.password);
         if (!isValid) {
-            throw new Error("Invalid password");
+            throw new Error("Nesprávné heslo.");
         }
 
         await db
@@ -137,7 +152,7 @@ class AuthService {
 
     async toggleLetsTalk(userId: string) {
         const user = await this.getUserById(userId);
-        if (!user) throw new Error("User not found");
+        if (!user) throw new Error("Uživatel nebyl nalezen.");
 
         const newStatus = user.letsTalk ? 0 : 1;
 
@@ -155,14 +170,41 @@ class AuthService {
         if (data.profilePicture !== undefined) updateData.profilePicture = data.profilePicture;
 
         if (Object.keys(updateData).length > 0) {
-            await db
-                .update(users)
-                .set(updateData)
-                .where(eq(users.userId, userId));
+            if (updateData.username) {
+                const existing = await db
+                    .select()
+                    .from(users)
+                    .where(eq(users.username, updateData.username))
+                    .limit(1);
+
+                if (existing.length > 0 && existing[0].userId !== userId) {
+                    throw new Error("Toto uživatelské jméno je již obsazené.");
+                }
+            }
+
+            try {
+                await db
+                    .update(users)
+                    .set(updateData)
+                    .where(eq(users.userId, userId));
+            } catch (err: any) {
+                if (err.message?.includes("UNIQUE constraint failed")) {
+                    if (err.message.includes("users.username")) {
+                        throw new Error("Toto uživatelské jméno je již obsazené.");
+                    }
+                    if (err.message.includes("users.email")) {
+                        throw new Error("Tento e-mail je již zaregistrován.");
+                    }
+                    if (err.message.includes("users.userId")) {
+                        throw new Error("Toto ID uživatele již existuje.");
+                    }
+                }
+                throw err;
+            }
         }
 
         const updatedUser = await this.getUserById(userId);
-        if (!updatedUser) throw new Error("User not found");
+        if (!updatedUser) throw new Error("Uživatel nebyl nalezen.");
 
         return {
             id: updatedUser.id,

@@ -28,23 +28,15 @@
   font-size: 1.5rem;
 }
 
-.alert {
-  padding: 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 1.25rem;
-  font-size: 0.85rem;
-}
-
 .alert--error {
-  background: #ffebee;
-  color: #c62828;
-  border: 1px solid #ffb3b3;
-}
-
-.alert--success {
-  background: #eefaf0;
-  color: #2e7d32;
-  border: 1px solid #b3ffb3;
+  font-size: 0.85rem;
+  color: #ff4d4d;
+  background-color: rgba(255, 77, 77, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  text-align: left;
+  border-left: 3px solid #ff4d4d;
+  margin: 1rem 0;
 }
 
 .authButton {

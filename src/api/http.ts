@@ -15,7 +15,7 @@ export async function request<T>(
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(data.message || "Request failed");
+    throw new Error(data.message || "Požadavek selhal");
   }
 
   return data;

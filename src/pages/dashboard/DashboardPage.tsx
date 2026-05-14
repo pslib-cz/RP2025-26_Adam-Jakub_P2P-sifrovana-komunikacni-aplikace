@@ -95,24 +95,25 @@ function DashboardPage() {
         <AnimatedLogo />
       </header>
       <div className={styles.content}>
-  
-        <OnlineUsersList
-          users={letsTalkFiltered}
-          currentUserId={user.userId}
-          onUserClick={handleUserClick}
-        />
-
         <RecentChats
           conversations={conversations}
           onConversationClick={handleConversationClick}
         />
 
-        <AllActiveUsers
-          users={allUsers}
-          currentUserId={user.userId}
-          onUserClick={handleUserClick}
-          loading={loading}
-        />
+        <div className={styles.rightColumn}>
+          <OnlineUsersList
+            users={letsTalkFiltered}
+            currentUserId={user.userId}
+            onUserClick={handleUserClick}
+          />
+
+          <AllActiveUsers
+            users={allUsers}
+            currentUserId={user.userId}
+            onUserClick={handleUserClick}
+            loading={loading}
+          />
+        </div>
       </div>
 <footer className={styles.footer}>
   <label className={styles.switchLabel}>
