@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { UserData } from "../../types/userdata";
 import styles from "./AllActiveUsers.module.css";
 
@@ -15,9 +15,13 @@ export const AllActiveUsers: React.FC<Props> = ({
   onUserClick,
   loading = false,
 }) => {
+  const [visibleCount, setVisibleCount] = useState(5);
+
   const filteredUsers = users.filter(
     (u) => u.userId !== currentUserId
   );
+
+  const visibleUsers = filteredUsers.slice(0, visibleCount);
 
   if (loading) {
     return <p className={styles.empty}>Načítám uživatele...</p>;
@@ -36,7 +40,7 @@ export const AllActiveUsers: React.FC<Props> = ({
       <h3>Všichni uživatelé</h3>
 
       <div className={styles.usersList}>
-        {filteredUsers.map((user) => (
+        {visibleUsers.map((user) => (
           <div
             key={user.userId}
             className={`${styles.userCard} ${
@@ -63,6 +67,15 @@ export const AllActiveUsers: React.FC<Props> = ({
           </div>
         ))}
       </div>
+
+      {visibleCount < filteredUsers.length && (
+        <button
+          className={styles.loadMoreButton}
+          onClick={() => setVisibleCount((prev) => prev + 5)}
+        >
+          Načíst další
+        </button>
+      )}
     </div>
   );
 };

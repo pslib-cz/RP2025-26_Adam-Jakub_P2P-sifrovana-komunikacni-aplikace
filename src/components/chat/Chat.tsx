@@ -22,10 +22,18 @@ export const Chat: React.FC<ChatProps> = ({
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const initialScrollRef = useRef(false);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!loading && messages.length > 0) {
+      if (!initialScrollRef.current) {
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+        initialScrollRef.current = true;
+      } else {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [messages, loading]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();

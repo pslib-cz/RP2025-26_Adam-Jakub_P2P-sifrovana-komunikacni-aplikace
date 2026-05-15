@@ -31,7 +31,11 @@
 .content {
   display: grid;
   grid-template-columns: 1fr 1.5fr;
+  grid-template-areas: 
+    "recent online"
+    "recent active";
   gap: 2rem;
+  align-items: start;
   overflow-y: auto;
   padding: 2rem;
   max-width: 1400px;
@@ -39,6 +43,10 @@
   margin: 0 auto;
   scroll-behavior: smooth;
 }
+
+.recentColumn { grid-area: recent; }
+.onlineColumn { grid-area: online; }
+.activeColumn { grid-area: active; }
 
 .content::-webkit-scrollbar {
   width: 6px;
@@ -52,15 +60,15 @@
 @media (max-width: 1024px) {
   .content {
     grid-template-columns: 1fr;
+    grid-template-areas: none;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
   }
-}
 
-.rightColumn {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  .onlineColumn { order: -1; }
+  .recentColumn { order: 0; }
+  .activeColumn { order: 1; }
 }
 
 .footer {

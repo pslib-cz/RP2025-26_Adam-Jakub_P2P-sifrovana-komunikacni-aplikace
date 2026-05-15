@@ -107,10 +107,11 @@
 }
 
 .messageRow {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 1rem;
+  width: 100%;
 }
 
 .lastMessage {
@@ -120,6 +121,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .unreadBadge {
