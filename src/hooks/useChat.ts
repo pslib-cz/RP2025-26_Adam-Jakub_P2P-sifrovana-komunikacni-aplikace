@@ -6,6 +6,8 @@ import { encryptMessage, safeDecrypt } from "../services/cryptoService";
 
 import { API_BASE_URL } from "../api/http";
 
+import { RTC_CONFIG } from "../config/webrtc";
+
 export const useChat = (currentUserId: string, targetUserId: string) => {
   const [messages, setMessages] = useState<any[]>([]);
   const [connected, setConnected] = useState(false);
@@ -69,12 +71,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     let ignoreOffer = false;
     let iceQueue: RTCIceCandidateInit[] = [];
 
-    const pc = new RTCPeerConnection({
-      iceServers: [
-        { urls: "stun:stun.l.google.com:19302" },
-        { urls: "stun:stun1.l.google.com:19302" },
-      ],
-    });
+    const pc = new RTCPeerConnection(RTC_CONFIG);
     pcRef.current = pc;
 
     const flushIceQueue = async () => {
@@ -101,7 +98,11 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     };
 
     pc.onicecandidate = ({ candidate }) => {
-      if (!candidate) return;
+      if (!candidate) {
+        console.log("ICE gathering complete");
+        return;
+      }
+      console.log("New ICE candidate gathered:", candidate.candidate);
       socketClient.send({
         type: "ice_candidate",
         targetUserId,
@@ -111,6 +112,7 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
     };
 
     pc.onconnectionstatechange = () => {
+      console.log("WebRTC Connection State:", pc.connectionState);
       if (pc.connectionState === "connected") setConnected(true);
       if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
         setConnected(false);
