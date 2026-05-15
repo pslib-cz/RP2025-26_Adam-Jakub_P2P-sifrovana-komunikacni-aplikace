@@ -179,12 +179,16 @@ export const useChat = (currentUserId: string, targetUserId: string) => {
       if (!data.candidate) return;
 
       try {
+        const candidate = new RTCIceCandidate(data.candidate);
         if (pc.remoteDescription) {
-          await pc.addIceCandidate(data.candidate);
+          await pc.addIceCandidate(candidate);
+          console.log("Successfully added remote ICE candidate");
         } else {
           iceQueue.push(data.candidate);
+          console.log("Queued remote ICE candidate (remoteDescription not set yet)");
         }
-      } catch {
+      } catch (err) {
+        console.error("Error adding remote ICE candidate:", err);
       }
     };
 
