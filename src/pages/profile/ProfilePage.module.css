@@ -16,6 +16,7 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
+  height: 100dvh;
   text-align: center;
   background-image: radial-gradient(circle, var(--white), transparent 20%, var(--primary));
   background-size: cover;

@@ -22,11 +22,9 @@
   --active: #AEF044;
   --inactive: #C90E0E;
 
-  /* Light Mode - Vaše barvy */
   --white: #EDEDED;
   --text: #1E1E1E;
 
-  /* Mapování pro Light Mode */
   --bg: var(--white);
   --card-bg: #ffffff;
   --text-muted: #666666;
@@ -38,11 +36,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Dark Mode - Prohození vašich barev */
     --white: #1E1E1E;
     --text: #EDEDED;
 
-    /* Mapování pro Dark Mode */
     --bg: var(--white);
     --card-bg: #2a2a2a;
     --text-muted: #aaaaaa;
@@ -62,6 +58,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
+  height: -webkit-fill-available;
   width: 100%;
   background-color: var(--bg);
   color: var(--text);
