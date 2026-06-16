@@ -6,7 +6,7 @@ import { WebSocketServer } from "ws";
 import db from "./db";
 import authRoutes from "./routes/authRoutes";
 import messageRoutes from "./routes/messageRoutes";
-import { handleConnection, getUsersWithStatus, onlineUsers } from "./ws/handlers";
+import { handleConnection} from "./ws/handlers";
 import { ExtendedWebSocket } from "./types/ws.types";
 
 import http from "http";
@@ -55,34 +55,10 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 });
 
 const wss = new WebSocketServer({ server });
-console.log(`Unified server running on port ${PORT}`);
 
 wss.on("connection", (ws: ExtendedWebSocket) => {
   handleConnection(wss, ws);
 });
-setInterval(async () => {
-  try {
-    const users = await getUsersWithStatus();
-
-    const online = users.filter((u: any) => u.isOnline);
-    const letsTalk = users.filter((u: any) => u.isOnline && u.letsTalk);
-
-    const usersForLog = users.map((u: any) => ({
-      userId: u.userId,
-      username: u.username,
-      isOnline: u.isOnline,
-      letsTalk: u.letsTalk,
-    }));
-
-    console.log("\n========== SERVER STATUS ==========");
-    console.table(usersForLog);
-    console.log(`🟢 Online: ${online.length}`);
-    console.log(`💬 LetsTalk online: ${letsTalk.length}`);
-    console.log("==================================\n");
-  } catch (err) {
-    console.error(err);
-  }
-}, 5000);
 
 process.on("SIGINT", async () => {
   console.log("Shutting down...");
